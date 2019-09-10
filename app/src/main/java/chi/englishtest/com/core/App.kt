@@ -15,7 +15,7 @@ class App : Application(), Injection {
 
         /**Retrofit*/
         api = ApiManager()
-        
+
         /**SharedPreferences*/
         SharedManager.init(this)
     }

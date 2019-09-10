@@ -9,6 +9,6 @@ object SharedManager {
     private const val PREFERENCES_NAME: String = "EnglishTestApp"
 
     fun init(context: Context) {
-        sharedPref =  context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
+        sharedPref = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
     }
 }

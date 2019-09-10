@@ -4,7 +4,7 @@ import chi.englishtest.com.network.Injection
 import chi.englishtest.com.network.RestApi
 import java.lang.ref.WeakReference
 
-abstract class BasePresenterImpl<T: BaseView>(injection: Injection) : BasePresenter<T> {
+abstract class BasePresenterImpl<T : BaseView>(injection: Injection) : BasePresenter<T> {
     private var restApi: RestApi = injection.injectRepository()
     private var viewRef: WeakReference<T>? = null
 

@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import chi.englishtest.com.R
 
-abstract class BaseActivity<T: BasePresenter<V>, V: BaseView> : AppCompatActivity(), BaseView {
+abstract class BaseActivity<T : BasePresenter<V>, V : BaseView> : AppCompatActivity(), BaseView {
 
     lateinit var presenter: T
 
