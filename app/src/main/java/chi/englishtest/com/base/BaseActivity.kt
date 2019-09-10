@@ -8,16 +8,23 @@ abstract class BaseActivity<T: BasePresenter<V>, V: BaseView> : AppCompatActivit
 
     lateinit var presenter: T
 
+    abstract fun provideLayout(): Int
     abstract fun injectRepository(): T
+    abstract fun buttonOnClickListener()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(provideLayout())
 
         presenter = injectRepository()
+        presenter.bindView(this as V)
+
+        buttonOnClickListener()
     }
 
-    override fun updateUi() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun onDestroy() {
+        presenter.onDestroy()
+        presenter.unbindView()
+        super.onDestroy()
     }
 }
