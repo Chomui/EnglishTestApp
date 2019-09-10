@@ -1,9 +1,11 @@
 package chi.englishtest.com.base
 
+import android.content.DialogInterface
+
 interface BaseView {
     fun startLoadingDialog()
-    fun finishLoadingDialog()
-    fun showAlertDialog()
-    fun onAlertDialogPositiveClick()
-    fun onAlertDialogNegativeClick()
+    fun stopLoadingDialog()
+    fun showAlertDialog(message: CharSequence, isNeedNegativeButton: Boolean = false)
+    fun onAlertDialogPositiveClick(dialog: DialogInterface, message: String)
+    fun onAlertDialogNegativeClick(dialog: DialogInterface)
 }

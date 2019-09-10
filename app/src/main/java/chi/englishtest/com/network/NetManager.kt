@@ -15,6 +15,11 @@ object NetManager {
     private var connectTimeout = 3L
     private var writeTimeout = 3L
     private var readTimeout = 3L
+    private var gson: Gson
+
+    init {
+        gson = createGson()
+    }
 
     fun getRestApi(): RestApi {
         return retrofit.create(RestApi::class.java)
@@ -50,5 +55,9 @@ object NetManager {
             .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
             .setLenient()
             .create()
+    }
+
+    fun getGson(): Gson {
+        return gson
     }
 }
