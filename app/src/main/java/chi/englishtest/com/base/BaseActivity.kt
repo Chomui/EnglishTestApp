@@ -2,6 +2,7 @@ package chi.englishtest.com.base
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import chi.englishtest.com.R
 
 abstract class BaseActivity<T: BasePresenter<V>, V: BaseView> : AppCompatActivity(), BaseView {
@@ -26,5 +27,17 @@ abstract class BaseActivity<T: BasePresenter<V>, V: BaseView> : AppCompatActivit
         presenter.onDestroy()
         presenter.unbindView()
         super.onDestroy()
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            onBackPressed()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

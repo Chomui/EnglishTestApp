@@ -1,5 +1,6 @@
 package chi.englishtest.com.base
 
+import chi.englishtest.com.network.Injection
 import chi.englishtest.com.network.RestApi
 import java.lang.ref.WeakReference
 

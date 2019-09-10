@@ -1,4 +1,4 @@
-package chi.englishtest.com.base
+package chi.englishtest.com.network
 
 import chi.englishtest.com.network.RestApi
 
