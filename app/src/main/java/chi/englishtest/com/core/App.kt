@@ -8,20 +8,10 @@ import chi.englishtest.com.sharedPref.SharedManager
 
 class App : Application(), Injection {
 
-    companion object {
-        lateinit var instance: App
-            private set
-    }
-
-    private lateinit var api: RestApi
+    private val api: RestApi by lazy { ApiManager() }
 
     override fun onCreate() {
         super.onCreate()
-
-        instance = this
-
-        /**Retrofit*/
-        api = ApiManager()
 
         /**SharedPreferences*/
         SharedManager.init(this)

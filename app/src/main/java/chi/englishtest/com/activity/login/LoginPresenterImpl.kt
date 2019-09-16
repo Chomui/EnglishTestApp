@@ -39,9 +39,4 @@ class LoginPresenterImpl(private var injection: Injection) : BasePresenterImpl<L
                 viewRef?.get()?.login()
             }, getDefaultErrorConsumer())
     }
-
-
-
-
-
 }

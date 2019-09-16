@@ -8,14 +8,14 @@ import retrofit2.Call
 
 class ApiManager : RestApi {
 
-    val restApi: RestApi = App.instance.injectRepository()
+    private var api: RestApi = NetManager.getRestApi()
 
     override fun signIn(email: String, pass: String): Single<LogInResponse> {
-        return restApi.signIn(email, pass)
+        return api.signIn(email, pass)
     }
 
     override fun signOut(pass: String): Single<LogOutResponse> {
-        return restApi.signOut(pass)
+        return api.signOut(pass)
     }
 
 }
