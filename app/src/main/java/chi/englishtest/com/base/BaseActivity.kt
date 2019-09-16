@@ -90,7 +90,4 @@ abstract class BaseActivity<T : BasePresenter<V>, V : BaseView> : AppCompatActiv
     override fun onAlertDialogNegativeClick(dialog: DialogInterface) {
         dialog.dismiss()
     }
-
-
-
 }

@@ -8,10 +8,17 @@ import chi.englishtest.com.sharedPref.SharedManager
 
 class App : Application(), Injection {
 
+    companion object {
+        lateinit var instance: App
+            private set
+    }
+
     private lateinit var api: RestApi
 
     override fun onCreate() {
         super.onCreate()
+
+        instance = this
 
         /**Retrofit*/
         api = ApiManager()
@@ -23,4 +30,8 @@ class App : Application(), Injection {
     override fun injectRepository(): RestApi {
         return api
     }
+
+
+
+
 }

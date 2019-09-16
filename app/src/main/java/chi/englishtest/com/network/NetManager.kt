@@ -1,12 +1,14 @@
 package chi.englishtest.com.network
 
 import chi.englishtest.com.BuildConfig
+import chi.englishtest.com.sharedPref.SharedManager
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -37,6 +39,7 @@ object NetManager {
         get() = Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create(createGson()))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .client(okHttpClient)
             .build()
 
@@ -46,6 +49,7 @@ object NetManager {
         override fun intercept(chain: Interceptor.Chain): Response {
             return chain.proceed(chain.request())
                 .newBuilder()
+                .addHeader("Authorization", SharedManager.accessToken)
                 .build()
         }
     }
