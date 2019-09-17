@@ -1,25 +1,13 @@
 package chi.englishtest.com.activity.login
 
-import android.util.Log
 import chi.englishtest.com.base.BasePresenterImpl
-import chi.englishtest.com.core.App
-import chi.englishtest.com.model.Error
-import chi.englishtest.com.model.net.login.LogInResponse
 import chi.englishtest.com.network.Injection
-import chi.englishtest.com.network.NetManager
-import chi.englishtest.com.network.RestApi
-import chi.englishtest.com.sharedPref.SharedManager
+import chi.englishtest.com.data.sharedPref.SharedManager
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MediaType
 import okhttp3.RequestBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.HttpException
-import retrofit2.Response
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
 
 class LoginPresenterImpl(private var injection: Injection) : BasePresenterImpl<LoginView>(injection), LoginPresenter {
 

@@ -9,7 +9,7 @@ import chi.englishtest.com.utils.LoadingDialog
 
 abstract class BaseActivity<T : BasePresenter<V>, V : BaseView> : AppCompatActivity(), BaseView {
 
-    lateinit var presenter: T
+    val presenter: T by lazy { injectRepository() }
 
     abstract fun provideLayout(): Int
     abstract fun injectRepository(): T
@@ -21,7 +21,6 @@ abstract class BaseActivity<T : BasePresenter<V>, V : BaseView> : AppCompatActiv
         super.onCreate(savedInstanceState)
         setContentView(provideLayout())
 
-        presenter = injectRepository()
         presenter.bindView(this as V)
 
         buttonOnClickListener()

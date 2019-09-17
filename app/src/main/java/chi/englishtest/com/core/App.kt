@@ -4,7 +4,7 @@ import android.app.Application
 import chi.englishtest.com.network.Injection
 import chi.englishtest.com.network.ApiManager
 import chi.englishtest.com.network.RestApi
-import chi.englishtest.com.sharedPref.SharedManager
+import chi.englishtest.com.data.sharedPref.SharedManager
 
 class App : Application(), Injection {
 

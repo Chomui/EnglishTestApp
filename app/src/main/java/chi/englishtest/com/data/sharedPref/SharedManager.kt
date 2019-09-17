@@ -1,4 +1,4 @@
-package chi.englishtest.com.sharedPref
+package chi.englishtest.com.data.sharedPref
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -17,7 +17,8 @@ object SharedManager {
     const val DEFAULT: String = "DEFAULT"
 
     fun init(context: Context) {
-        sharedPref = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
+        sharedPref = context.getSharedPreferences(
+            PREFERENCES_NAME, Context.MODE_PRIVATE)
     }
 
     var isUserAuthorized: Boolean?
@@ -27,25 +28,37 @@ object SharedManager {
             .apply()
 
     var accessToken: String?
-        get() = sharedPref!!.getString(ACCESS_TOKEN, DEFAULT)
+        get() = sharedPref!!.getString(
+            ACCESS_TOKEN,
+            DEFAULT
+        )
         set(value) = sharedPref!!.edit()
             .putString(ACCESS_TOKEN, value)
             .apply()
 
     var userEmail: String?
-        get() = sharedPref!!.getString(USER_EMAIL, DEFAULT)
+        get() = sharedPref!!.getString(
+            USER_EMAIL,
+            DEFAULT
+        )
         set(value) = sharedPref!!.edit()
             .putString(USER_EMAIL, value)
             .apply()
 
     var userName: String?
-        get() = sharedPref!!.getString(USER_NAME, DEFAULT)
+        get() = sharedPref!!.getString(
+            USER_NAME,
+            DEFAULT
+        )
         set(value) = sharedPref!!.edit()
             .putString(USER_NAME, value)
             .apply()
 
     var userPassword: String?
-        get() = sharedPref!!.getString(USER_PASSWORD, DEFAULT)
+        get() = sharedPref!!.getString(
+            USER_PASSWORD,
+            DEFAULT
+        )
         set(value) = sharedPref!!.edit()
             .putString(USER_PASSWORD, value)
             .apply()

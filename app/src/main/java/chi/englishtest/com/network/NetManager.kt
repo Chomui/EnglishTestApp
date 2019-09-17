@@ -1,7 +1,7 @@
 package chi.englishtest.com.network
 
 import chi.englishtest.com.BuildConfig
-import chi.englishtest.com.sharedPref.SharedManager
+import chi.englishtest.com.data.sharedPref.SharedManager
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.Interceptor

@@ -2,11 +2,9 @@ package chi.englishtest.com.network
 
 import chi.englishtest.com.model.net.login.LogInResponse
 import chi.englishtest.com.model.net.logout.LogOutResponse
-import chi.englishtest.com.sharedPref.SharedManager
-import io.reactivex.Observable
+import chi.englishtest.com.data.sharedPref.SharedManager
 import io.reactivex.Single
 import okhttp3.RequestBody
-import retrofit2.Call
 import retrofit2.http.*
 
 interface RestApi {
