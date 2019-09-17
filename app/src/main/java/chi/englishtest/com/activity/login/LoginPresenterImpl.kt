@@ -12,6 +12,8 @@ import chi.englishtest.com.sharedPref.SharedManager
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
+import okhttp3.MediaType
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.HttpException
@@ -23,14 +25,16 @@ class LoginPresenterImpl(private var injection: Injection) : BasePresenterImpl<L
 
     override fun signIn(email: String, pass: String) {
         viewRef!!.get()!!.startLoadingDialog()
-        restApi.signIn(email, pass)
+        val emailBody: RequestBody = RequestBody.create(MediaType.parse("text/plain"), email)
+        val passBody: RequestBody = RequestBody.create(MediaType.parse("text/plain"), pass)
+        restApi.signIn(emailBody, passBody)
             .subscribeOn(Schedulers.io())
             .map {
                 SharedManager.isUserAuthorized = true
-                SharedManager.accessToken = it.authenticationTokens?.token
+                SharedManager.accessToken = it.authenticationTokens?.first()?.token
                 SharedManager.userEmail = email
                 SharedManager.userPassword = pass
-                SharedManager.userId = it.authenticationTokens?.userId
+                SharedManager.userId = it.authenticationTokens?.first()?.userId
                 SharedManager.isTeacher = it.isTeacher
             }
             .observeOn(AndroidSchedulers.mainThread())
