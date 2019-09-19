@@ -7,13 +7,14 @@ import androidx.room.Insert
 import androidx.room.Query
 import chi.englishtest.com.data.db.entity.Test
 import io.reactivex.Completable
+import io.reactivex.Maybe
 import io.reactivex.Single
 
 @Dao
 interface TestDao {
 
     @Query("SELECT * FROM " + EnglishContract.EnglishTest.TABLE_NAME)
-    fun getAllTests(): Single<List<Test>>
+    fun getAllTests(): Maybe<List<Test>>
 
     @Query("SELECT * FROM " + EnglishContract.EnglishTest.TABLE_NAME +
                 " WHERE " + BaseColumns._ID + " = :id")

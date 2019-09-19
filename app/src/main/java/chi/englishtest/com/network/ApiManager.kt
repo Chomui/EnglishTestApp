@@ -3,11 +3,13 @@ package chi.englishtest.com.network
 import chi.englishtest.com.core.App
 import chi.englishtest.com.model.net.login.LogInResponse
 import chi.englishtest.com.model.net.logout.LogOutResponse
+import chi.englishtest.com.model.net.test.TestResponse
 import io.reactivex.Single
 import okhttp3.RequestBody
 import retrofit2.Call
 
 class ApiManager : RestApi {
+
 
     private var api: RestApi = NetManager.getRestApi()
 
@@ -17,6 +19,10 @@ class ApiManager : RestApi {
 
     override fun signOut(pass: String): Single<LogOutResponse> {
         return api.signOut(pass)
+    }
+
+    override fun getTests(): Single<List<TestResponse>> {
+        return api.getTests()
     }
 
 }
