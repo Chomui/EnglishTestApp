@@ -1,4 +1,4 @@
-package chi.englishtest.com.base
+package chi.englishtest.com.data.fragment
 
 interface BasePresenter<T: BaseView> {
     fun bindView(view: T)

@@ -1,13 +1,13 @@
-package chi.englishtest.com.base
+package chi.englishtest.com.data.activity
 
 import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
-import chi.englishtest.com.R
 import chi.englishtest.com.utils.LoadingDialog
 
-abstract class BaseActivity<T : BasePresenter<V>, V : BaseView> : AppCompatActivity(), BaseView {
+abstract class BaseActivity<T : BasePresenter<V>, V : BaseView> : AppCompatActivity(),
+    BaseView {
 
     val presenter: T by lazy { injectRepository() }
 
@@ -66,7 +66,10 @@ abstract class BaseActivity<T : BasePresenter<V>, V : BaseView> : AppCompatActiv
     }
 
     private fun buildAlertDialog(message: String, isNeedNegativeButton: Boolean) {
-        val builder = BaseAlertDialog.Builder(this, android.R.color.holo_purple)
+        val builder = BaseAlertDialog.Builder(
+            this,
+            android.R.color.holo_purple
+        )
             .setMessage(message)
             .setPositiveButton("OK") { dialog, _ ->
                 dialog.dismiss()

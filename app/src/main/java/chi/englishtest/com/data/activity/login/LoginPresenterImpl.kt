@@ -1,6 +1,6 @@
-package chi.englishtest.com.activity.login
+package chi.englishtest.com.data.activity.login
 
-import chi.englishtest.com.base.BasePresenterImpl
+import chi.englishtest.com.data.activity.BasePresenterImpl
 import chi.englishtest.com.network.Injection
 import chi.englishtest.com.data.sharedPref.SharedManager
 import io.reactivex.android.schedulers.AndroidSchedulers

@@ -1,6 +1,5 @@
-package chi.englishtest.com.model.net.questions
+package chi.englishtest.com.model.net.question
 
-import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 data class QuestionResponse(

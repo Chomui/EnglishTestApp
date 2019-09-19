@@ -1,4 +1,4 @@
-package chi.englishtest.com.base
+package chi.englishtest.com.data.activity
 
 import android.content.DialogInterface
 

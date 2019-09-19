@@ -1,6 +1,8 @@
-package chi.englishtest.com.base
+package chi.englishtest.com.data.fragment
 
 import android.util.Log
+import androidx.room.RoomDatabase
+import chi.englishtest.com.data.db.AppDatabase
 import chi.englishtest.com.model.Error
 import chi.englishtest.com.network.Injection
 import chi.englishtest.com.network.NetManager
@@ -11,8 +13,9 @@ import java.lang.ref.WeakReference
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
-abstract class BasePresenterImpl<T : BaseView>(injection: Injection) : BasePresenter<T> {
-    var restApi: RestApi = injection.injectRepository()
+abstract class BasePresenterImpl<T: BaseView>(injection: Injection): BasePresenter<T> {
+    var restApi: RestApi = injection.injectRestApi()
+    var db: AppDatabase = injection.injectDatabase()
     var viewRef: WeakReference<T>? = null
 
     override fun bindView(view: T) {
