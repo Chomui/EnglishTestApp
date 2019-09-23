@@ -10,7 +10,6 @@ import retrofit2.Call
 
 class ApiManager : RestApi {
 
-
     private var api: RestApi = NetManager.getRestApi()
 
     override fun signIn(email: RequestBody, pass: RequestBody): Single<LogInResponse> {

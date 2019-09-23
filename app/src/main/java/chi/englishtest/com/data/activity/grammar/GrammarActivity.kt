@@ -16,6 +16,9 @@ class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarVi
 
     override fun setQuestionToList(list: List<Question>) {
         listQuestion = list
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentPlace, QuestionFragment())
+            .commit()
     }
 
     override fun injectRepository(): GrammarPresenter = GrammarPresenterImpl(applicationContext as Injection)
@@ -24,10 +27,7 @@ class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarVi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragmentPlace, QuestionFragment())
-            .commit()
+        presenter.getTest(74)
     }
 
     override fun buttonOnClickListener() {

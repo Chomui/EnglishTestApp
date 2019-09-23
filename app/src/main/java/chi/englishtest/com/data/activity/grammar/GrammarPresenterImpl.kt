@@ -14,6 +14,36 @@ class GrammarPresenterImpl(private val injection: Injection) : BasePresenterImpl
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(Consumer {
                 viewRef?.get()?.setQuestionToList(it)
-            })
+            }, getDefaultErrorConsumer())
     }
+
+    /*
+    override fun testsIsEmpty() {
+        viewRef?.get()?.startLoadingDialog()
+        db.testDao()
+            .getAllTests()
+            .toObservable()
+            .subscribeOn(Schedulers.io())
+            .flatMap {
+                if(it.isEmpty()){
+                    loadFromNetworkAndCache()
+                }else{
+                    Observable.just(it)
+                }
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                viewRef?.get()?.stopLoadingDialog()
+                viewRef?.get()?.openGrammar()
+            }
+    }
+
+    private fun loadFromNetworkAndCache() =
+        restApi.getTests()
+            .toObservable()
+            .flatMapIterable { it }
+            .flatMap {
+                db.testDao().addTest(Test(it.id!!, it.name!!, it.description!!)).toObservable()
+            }
+     */
 }

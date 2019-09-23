@@ -8,20 +8,21 @@ import androidx.room.Query
 import chi.englishtest.com.data.db.entity.Test
 import io.reactivex.Completable
 import io.reactivex.Maybe
+import io.reactivex.Observable
 import io.reactivex.Single
 
 @Dao
 interface TestDao {
 
     @Query("SELECT * FROM " + EnglishContract.EnglishTest.TABLE_NAME)
-    fun getAllTests(): Maybe<List<Test>>
+    fun getAllTests(): Single<List<Test>>
 
     @Query("SELECT * FROM " + EnglishContract.EnglishTest.TABLE_NAME +
                 " WHERE " + BaseColumns._ID + " = :id")
     fun getTestById(id: Int): Single<Test>
 
     @Insert
-    fun addTest(test: Test): Completable
+    fun addTest(test: Test): Single<Long>
 
     @Insert
     fun addAllTests(vararg tests: Test): Completable

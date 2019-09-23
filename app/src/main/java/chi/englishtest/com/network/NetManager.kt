@@ -47,10 +47,10 @@ object NetManager {
     class ResponseInterceptor : Interceptor {
         @Throws(IOException::class)
         override fun intercept(chain: Interceptor.Chain): Response {
-            return chain.proceed(chain.request())
+            return chain.proceed(chain.request()
                 .newBuilder()
-                .addHeader("Authorization", SharedManager.accessToken)
-                .build()
+                .addHeader("Authorization", SharedManager.accessToken!!)
+                .build())
         }
     }
 
