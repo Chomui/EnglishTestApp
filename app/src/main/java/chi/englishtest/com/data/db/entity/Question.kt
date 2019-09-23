@@ -12,19 +12,17 @@ class Question {
     @ColumnInfo(name = "test_id") var testId: Int? = null
     @Ignore var answers: List<Answer>? = null
 
-
     constructor(id: Int?, question: String?, testId: Int?) {
         this.id = id
         this.question = question
         this.testId = testId
     }
 
+    @Ignore
     constructor(id: Int?, question: String?, testId: Int?, answers: List<Answer>?) {
         this.id = id
         this.question = question
         this.testId = testId
         this.answers = answers
     }
-
-
 }

@@ -14,13 +14,16 @@ interface AnswerDao {
 
     @Query("SELECT * FROM " + EnglishContract.EnglishAnswer.TABLE_NAME +
             " WHERE " + EnglishContract.EnglishAnswer.QUESTION_ID + " = :questionId")
-    fun getAnswersByQuestionId(questionId: Int): Single<List<Question>>
+    fun getAnswersByQuestionId(questionId: Int): Single<List<Answer>>
 
     @Insert
-    fun addAnswer(answer: Answer): Completable
+    fun addAnswer(answer: Answer): Single<Long>
 
     @Insert
-    fun addAllAnswer(vararg answers: Answer): Completable
+    fun addAllAnswer(vararg answers: Answer): Single<List<Long>>
+
+    @Insert
+    fun addAllAnswer(answers: List<Answer>): Single<List<Long>>
 
     @Delete
     fun removeAnswer(answer: Answer): Completable

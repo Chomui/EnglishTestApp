@@ -28,7 +28,7 @@ interface TestDao {
     fun addAllTests(vararg tests: Test): Completable
 
     @Insert
-    fun addAllTests(tests: List<Test>): Completable
+    fun addAllTests(tests: List<Test>): Single<List<Long>>
 
     @Delete
     fun removeTest(test: Test): Completable

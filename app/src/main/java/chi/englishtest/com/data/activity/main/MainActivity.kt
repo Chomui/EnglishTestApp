@@ -13,7 +13,7 @@ class MainActivity : BaseActivity<MainPresenter, MainView>(), MainView {
 
     override fun openGrammar() {
         Toast.makeText(this, SharedManager.accessToken, Toast.LENGTH_LONG).show()
-        //startActivity(Intent(this, GrammarActivity::class.java))
+        startActivity(Intent(this, GrammarActivity::class.java))
     }
 
     override fun injectRepository(): MainPresenter =

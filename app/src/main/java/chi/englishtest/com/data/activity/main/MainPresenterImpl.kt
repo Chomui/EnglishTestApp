@@ -5,6 +5,7 @@ import chi.englishtest.com.data.db.entity.Test
 import chi.englishtest.com.network.Injection
 import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 
 class MainPresenterImpl(private var injection: Injection) : BasePresenterImpl<MainView>(injection),
@@ -24,18 +25,24 @@ class MainPresenterImpl(private var injection: Injection) : BasePresenterImpl<Ma
                 }
             }
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
+            .subscribe( Consumer {
                 viewRef?.get()?.stopLoadingDialog()
                 viewRef?.get()?.openGrammar()
-            }
+            }, getDefaultErrorConsumer())
     }
 
     private fun loadFromNetworkAndCache() =
         restApi.getTests()
             .toObservable()
-            .flatMapIterable { it }
+            .map {
+                val list: MutableList<Test> = ArrayList<Test>()
+                for(test in it) {
+                    list.add(Test(test.id!!, test.name!!, test.description!!))
+                }
+                list
+            }
             .flatMap {
-                db.testDao().addTest(Test(it.id!!, it.name!!, it.description!!)).toObservable()
+                db.testDao().addAllTests(it).toObservable()
             }
 
     /*override fun loadTestsFromNetworkAndCache() {

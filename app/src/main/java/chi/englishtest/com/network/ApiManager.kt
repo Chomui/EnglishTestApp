@@ -1,12 +1,11 @@
 package chi.englishtest.com.network
 
-import chi.englishtest.com.core.App
 import chi.englishtest.com.model.net.login.LogInResponse
 import chi.englishtest.com.model.net.logout.LogOutResponse
+import chi.englishtest.com.model.net.question.QuestionResponse
 import chi.englishtest.com.model.net.test.TestResponse
 import io.reactivex.Single
 import okhttp3.RequestBody
-import retrofit2.Call
 
 class ApiManager : RestApi {
 
@@ -22,6 +21,10 @@ class ApiManager : RestApi {
 
     override fun getTests(): Single<List<TestResponse>> {
         return api.getTests()
+    }
+
+    override fun getQuestionsByTestId(testId: Int): Single<List<QuestionResponse>> {
+        return api.getQuestionsByTestId(testId)
     }
 
 }

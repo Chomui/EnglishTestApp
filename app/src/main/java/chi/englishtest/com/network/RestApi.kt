@@ -3,6 +3,7 @@ package chi.englishtest.com.network
 import chi.englishtest.com.model.net.login.LogInResponse
 import chi.englishtest.com.model.net.logout.LogOutResponse
 import chi.englishtest.com.data.sharedPref.SharedManager
+import chi.englishtest.com.model.net.question.QuestionResponse
 import chi.englishtest.com.model.net.test.TestResponse
 import io.reactivex.Single
 import okhttp3.RequestBody
@@ -19,4 +20,7 @@ interface RestApi {
 
     @GET("tests")
     fun getTests(): Single<List<TestResponse>>
+
+    @GET("questions")
+    fun getQuestionsByTestId(@Query("test_id") testId: Int): Single<List<QuestionResponse>>
 }

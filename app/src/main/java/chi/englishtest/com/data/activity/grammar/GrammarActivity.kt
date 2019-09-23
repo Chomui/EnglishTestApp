@@ -1,21 +1,18 @@
 package chi.englishtest.com.data.activity.grammar
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import chi.englishtest.com.R
 import chi.englishtest.com.data.activity.BaseActivity
 import chi.englishtest.com.data.db.entity.Question
+import chi.englishtest.com.data.fragment.allquestions.AllQuestionsFragment
 import chi.englishtest.com.data.fragment.question.QuestionFragment
 import chi.englishtest.com.network.Injection
 import kotlinx.android.synthetic.main.activity_grammar.*
 
 class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarView {
-
-    companion object {
-        var listQuestion: List<Question>? = null
-    }
-
-    override fun setQuestionToList(list: List<Question>) {
-        listQuestion = list
+    override fun openQuestionFragment() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentPlace, QuestionFragment())
             .commit()
@@ -27,7 +24,27 @@ class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarVi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter.getTest(74)
+
+        setSupportActionBar(toolbarGrammar)
+
+        presenter.getTest(99)
+
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.toolbar_grammar, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.action_show -> {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentPlace, AllQuestionsFragment())
+                    .commit()
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun buttonOnClickListener() {

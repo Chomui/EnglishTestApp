@@ -16,13 +16,13 @@ interface QuestionDao {
     fun getQuestionsByTestId(testId: Int): Single<List<Question>>
 
     @Insert
-    fun addQuestion(question: Question): Completable
+    fun addQuestion(question: Question): Single<Long>
 
     @Insert
-    fun addAllQuestions(vararg questions: Question): Completable
+    fun addAllQuestions(vararg questions: Question): Single<List<Long>>
 
     @Insert
-    fun addAllQuestions(questions: List<Question>): Completable
+    fun addAllQuestions(questions: List<Question>): Single<List<Long>>
 
     @Delete
     fun removeQuestion(question: Question): Completable
