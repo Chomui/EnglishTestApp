@@ -12,7 +12,11 @@ import chi.englishtest.com.data.sharedPref.SharedManager
 import chi.englishtest.com.network.Injection
 import kotlinx.android.synthetic.main.activity_grammar.*
 
-class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarView {
+class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarView, AllQuestionsFragment.OpenQuestionFragment  {
+
+    companion object {
+        var questions: List<Question>? = null
+    }
 
     override fun injectRepository(): GrammarPresenter = GrammarPresenterImpl(applicationContext as Injection)
 
@@ -26,10 +30,21 @@ class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarVi
         presenter.getTest(SharedManager.TEST_ID)
     }
 
-    override fun openQuestionFragment() {
+    override fun openQuestionFragment(questions: List<Question>) {
+        GrammarActivity.questions = questions
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentPlace, QuestionFragment())
             .commit()
+    }
+
+    override fun openQuestionFragment(position: Int) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentPlace, QuestionFragment.newInstance(this, position))
+            .commit()
+    }
+
+    override fun fromAllToQuestionFragment(position: Int) {
+        openQuestionFragment(position)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -41,7 +56,7 @@ class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarVi
         when(item.itemId) {
             R.id.action_show -> {
                 supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragmentPlace, AllQuestionsFragment())
+                    .replace(R.id.fragmentPlace, AllQuestionsFragment(this))
                     .commit()
             }
         }

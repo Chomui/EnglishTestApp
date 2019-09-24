@@ -1,5 +1,6 @@
 package chi.englishtest.com.data.fragment.question
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,7 @@ import chi.englishtest.com.data.activity.grammar.GrammarActivity
 import chi.englishtest.com.data.db.entity.Answer
 import chi.englishtest.com.data.db.entity.Question
 import chi.englishtest.com.data.fragment.BaseFragment
+import chi.englishtest.com.data.fragment.allquestions.AllQuestionsFragment
 import chi.englishtest.com.data.sharedPref.SharedManager
 import chi.englishtest.com.network.Injection
 import kotlinx.android.synthetic.main.fragment_question.*
@@ -20,9 +22,17 @@ class QuestionFragment : BaseFragment<QuestionPresenter, QuestionView>(), Questi
 
     companion object{
         var currentQuestionIndex: Int = 0
+
+        fun newInstance(context: Context, adapterPosition: Int): QuestionFragment {
+            val fragment = QuestionFragment()
+            val args: Bundle = Bundle()
+            args.putInt("position", adapterPosition)
+            fragment.arguments = args
+            return fragment
+        }
     }
 
-    private var questions: List<Question>? = null
+    private var questions: List<Question>? = GrammarActivity.questions
     private var answers: List<Answer>? = null
 
     override fun provideLayout(): Int = R.layout.fragment_question
@@ -30,7 +40,11 @@ class QuestionFragment : BaseFragment<QuestionPresenter, QuestionView>(), Questi
     override fun injectRepository(): QuestionPresenter = QuestionPresenterImpl(activity?.applicationContext as Injection)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        presenter.getQuestions(SharedManager.TEST_ID)
+        if(arguments != null) {
+            currentQuestionIndex = arguments!!.getInt("position", 0)
+        }
+        //presenter.getQuestions(SharedManager.TEST_ID)
+        presenter.getAnswers(questions!![currentQuestionIndex].id!!)
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
@@ -40,28 +54,28 @@ class QuestionFragment : BaseFragment<QuestionPresenter, QuestionView>(), Questi
             when(p1) {
                 R.id.radioButtonFirst -> {
                     radioGroupQuestion.clearCheck()
-                    presenter.setAnswer(questions!![currentQuestionIndex].id!!, answers!!.first().id)
+                    presenter.setAnswer(questions!![currentQuestionIndex], answers!!.first().id)
                 }
                 R.id.radioButtonSecond -> {
                     radioGroupQuestion.clearCheck()
-                    presenter.setAnswer(questions!![currentQuestionIndex].id!!, answers!![1].id)
+                    presenter.setAnswer(questions!![currentQuestionIndex], answers!![1].id)
                 }
                 R.id.radioButtonThird -> {
                     radioGroupQuestion.clearCheck()
-                    presenter.setAnswer(questions!![currentQuestionIndex].id!!, answers!![2].id)
+                    presenter.setAnswer(questions!![currentQuestionIndex], answers!![2].id)
                 }
                 R.id.radioButtonFourth -> {
                     radioGroupQuestion.clearCheck()
-                    presenter.setAnswer(questions!![currentQuestionIndex].id!!, answers!![3].id)
+                    presenter.setAnswer(questions!![currentQuestionIndex], answers!![3].id)
                 }
             }
         }
     }
 
-    override fun setDataQuestions(questions: List<Question>) {
+    /*override fun setDataQuestions(questions: List<Question>) {
         this.questions = questions
         presenter.getAnswers(questions[currentQuestionIndex].id!!)
-    }
+    }*/
 
     override fun showQuestion(answers: List<Answer>) {
         this.answers = answers

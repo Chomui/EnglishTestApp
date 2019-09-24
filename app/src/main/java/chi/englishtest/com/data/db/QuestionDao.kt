@@ -1,9 +1,6 @@
 package chi.englishtest.com.data.db
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import chi.englishtest.com.data.db.entity.Question
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -29,4 +26,7 @@ interface QuestionDao {
 
     @Delete
     fun removeAllQuestions(questions: List<Question>)
+
+    @Update
+    fun updateQuestion(question: Question): Single<Int>
 }

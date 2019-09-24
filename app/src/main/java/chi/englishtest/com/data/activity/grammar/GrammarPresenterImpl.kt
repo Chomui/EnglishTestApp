@@ -42,6 +42,7 @@ class GrammarPresenterImpl(private val injection: Injection) :
                         }
                         .flatMapIterable { questions }
                         .flatMap { db.answerDao().addAllAnswer(it.answersToUiModel()).toObservable() }
+                        .flatMap { db.questionDao().getQuestionsByTestId(id).toObservable() }
                 } else {
                     Observable.just(it)
                 }
@@ -49,7 +50,7 @@ class GrammarPresenterImpl(private val injection: Injection) :
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(Consumer {
                 viewRef?.get()?.stopLoadingDialog()
-                viewRef?.get()?.openQuestionFragment()
+                viewRef?.get()?.openQuestionFragment(it)
             }, getDefaultErrorConsumer())
     }
 
