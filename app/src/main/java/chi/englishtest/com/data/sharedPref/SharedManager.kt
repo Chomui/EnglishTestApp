@@ -15,6 +15,7 @@ object SharedManager {
     private const val USER_ID: String = "USER_ID"
     private const val IS_TEACHER: String = "IS_TEACHER"
     const val DEFAULT: String = "DEFAULT"
+    const val TEST_ID: Int = 98
 
     fun init(context: Context) {
         sharedPref = context.getSharedPreferences(

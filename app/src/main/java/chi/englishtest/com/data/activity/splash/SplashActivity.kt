@@ -12,8 +12,7 @@ import chi.englishtest.com.network.Injection
 class SplashActivity : BaseActivity<SplashPresenter, SplashView>(), SplashView {
     override fun provideLayout(): Int = R.layout.activity_splash
 
-    override fun injectRepository(): SplashPresenter =
-        SplashPresenterImpl(applicationContext as Injection)
+    override fun injectRepository(): SplashPresenter = SplashPresenterImpl(applicationContext as Injection)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

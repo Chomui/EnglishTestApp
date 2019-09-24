@@ -8,15 +8,11 @@ import chi.englishtest.com.data.activity.BaseActivity
 import chi.englishtest.com.data.db.entity.Question
 import chi.englishtest.com.data.fragment.allquestions.AllQuestionsFragment
 import chi.englishtest.com.data.fragment.question.QuestionFragment
+import chi.englishtest.com.data.sharedPref.SharedManager
 import chi.englishtest.com.network.Injection
 import kotlinx.android.synthetic.main.activity_grammar.*
 
 class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarView {
-    override fun openQuestionFragment() {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragmentPlace, QuestionFragment())
-            .commit()
-    }
 
     override fun injectRepository(): GrammarPresenter = GrammarPresenterImpl(applicationContext as Injection)
 
@@ -27,8 +23,13 @@ class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarVi
 
         setSupportActionBar(toolbarGrammar)
 
-        presenter.getTest(99)
+        presenter.getTest(SharedManager.TEST_ID)
+    }
 
+    override fun openQuestionFragment() {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentPlace, QuestionFragment())
+            .commit()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

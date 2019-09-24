@@ -1,5 +1,7 @@
 package chi.englishtest.com.data.fragment.question
 
+import android.util.Log
+import android.widget.Toast
 import chi.englishtest.com.data.fragment.BasePresenterImpl
 import chi.englishtest.com.network.Injection
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -10,7 +12,7 @@ class QuestionPresenterImpl(private val injection: Injection) : BasePresenterImp
     override fun getQuestions(testId: Int) {
         viewRef?.get()?.startLoadingDialog()
         db.questionDao()
-            .getQuestionsByTestId(99)
+            .getQuestionsByTestId(testId)
             .subscribeOn(Schedulers.io())
             .toObservable()
             .observeOn(AndroidSchedulers.mainThread())
@@ -31,6 +33,11 @@ class QuestionPresenterImpl(private val injection: Injection) : BasePresenterImp
                 viewRef?.get()?.stopLoadingDialog()
                 viewRef?.get()?.showQuestion(it)
             }
+    }
+
+    override fun setAnswer(questionId: Int, answerId: Int) {
+        Log.e("Retrofit", "$questionId: $answerId")
+        viewRef?.get()?.setNextQuestion()
     }
 
 }

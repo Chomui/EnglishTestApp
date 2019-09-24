@@ -6,11 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.Toast
 import chi.englishtest.com.R
 import chi.englishtest.com.data.activity.grammar.GrammarActivity
 import chi.englishtest.com.data.db.entity.Answer
 import chi.englishtest.com.data.db.entity.Question
 import chi.englishtest.com.data.fragment.BaseFragment
+import chi.englishtest.com.data.sharedPref.SharedManager
 import chi.englishtest.com.network.Injection
 import kotlinx.android.synthetic.main.fragment_question.*
 
@@ -22,6 +24,39 @@ class QuestionFragment : BaseFragment<QuestionPresenter, QuestionView>(), Questi
 
     private var questions: List<Question>? = null
     private var answers: List<Answer>? = null
+
+    override fun provideLayout(): Int = R.layout.fragment_question
+
+    override fun injectRepository(): QuestionPresenter = QuestionPresenterImpl(activity?.applicationContext as Injection)
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        presenter.getQuestions(SharedManager.TEST_ID)
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        radioGroupQuestion.setOnCheckedChangeListener { p0, p1 ->
+            when(p1) {
+                R.id.radioButtonFirst -> {
+                    radioGroupQuestion.clearCheck()
+                    presenter.setAnswer(questions!![currentQuestionIndex].id!!, answers!!.first().id)
+                }
+                R.id.radioButtonSecond -> {
+                    radioGroupQuestion.clearCheck()
+                    presenter.setAnswer(questions!![currentQuestionIndex].id!!, answers!![1].id)
+                }
+                R.id.radioButtonThird -> {
+                    radioGroupQuestion.clearCheck()
+                    presenter.setAnswer(questions!![currentQuestionIndex].id!!, answers!![2].id)
+                }
+                R.id.radioButtonFourth -> {
+                    radioGroupQuestion.clearCheck()
+                    presenter.setAnswer(questions!![currentQuestionIndex].id!!, answers!![3].id)
+                }
+            }
+        }
+    }
 
     override fun setDataQuestions(questions: List<Question>) {
         this.questions = questions
@@ -37,35 +72,16 @@ class QuestionFragment : BaseFragment<QuestionPresenter, QuestionView>(), Questi
         radioButtonFourth.text = answers[3].answer
     }
 
-    //private val radioButtonFirst: RadioButton? by lazy { view?.findViewById<RadioButton>(R.id.radioButtonFirst) }
-
-    override fun provideLayout(): Int = R.layout.fragment_question
-
-    override fun injectRepository(): QuestionPresenter = QuestionPresenterImpl(activity?.applicationContext as Injection)
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        presenter.getQuestions(99)
-        radioGroupQuestion.setOnCheckedChangeListener { p0, p1 ->
-            when(p1) {
-                R.id.radioButtonFirst -> {
-
-                }
-                R.id.radioButtonSecond -> {
-
-                }
-                R.id.radioButtonThird -> {
-
-                }
-                R.id.radioButtonFourth -> {
-
-                }
-            }
+    override fun setNextQuestion() {
+        if (currentQuestionIndex < questions!!.size.minus(1)) {
+            currentQuestionIndex++
+            presenter.getAnswers(questions!![currentQuestionIndex].id!!)
+        } else {
+            Toast.makeText(view?.context, "Вопросы закончились", Toast.LENGTH_SHORT).show()
         }
-        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun buttonOnClickListener() {
-
 
     }
 }

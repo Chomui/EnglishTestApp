@@ -11,19 +11,18 @@ import chi.englishtest.com.network.Injection
 
 class MainActivity : BaseActivity<MainPresenter, MainView>(), MainView {
 
-    override fun openGrammar() {
-        Toast.makeText(this, SharedManager.accessToken, Toast.LENGTH_LONG).show()
-        startActivity(Intent(this, GrammarActivity::class.java))
-    }
-
-    override fun injectRepository(): MainPresenter =
-        MainPresenterImpl(applicationContext as Injection)
+    override fun injectRepository(): MainPresenter = MainPresenterImpl(applicationContext as Injection)
 
     override fun provideLayout(): Int = R.layout.activity_main
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         presenter.testsIsEmpty()
+    }
+
+    override fun openGrammar() {
+        Toast.makeText(this, SharedManager.accessToken, Toast.LENGTH_LONG).show()
+        startActivity(Intent(this, GrammarActivity::class.java))
     }
 
     override fun buttonOnClickListener() {
