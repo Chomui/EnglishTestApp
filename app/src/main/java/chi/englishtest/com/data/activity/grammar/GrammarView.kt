@@ -4,6 +4,5 @@ import chi.englishtest.com.data.activity.BaseView
 import chi.englishtest.com.data.db.entity.Question
 
 interface GrammarView : BaseView {
-    fun openQuestionFragment(questions: List<Question>)
-    fun openQuestionFragment(position: Int)
+    fun openQuestionFragment()
 }

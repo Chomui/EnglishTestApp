@@ -12,6 +12,10 @@ interface QuestionDao {
         " WHERE " + EnglishContract.EnglishQuestion.TEST_ID + " = :testId")
     fun getQuestionsByTestId(testId: Int): Single<List<Question>>
 
+    @Query("SELECT * FROM " + EnglishContract.EnglishQuestion.TABLE_NAME +
+            " WHERE " + EnglishContract.EnglishQuestion.TEST_ID + " = :testId")
+    fun getQuestionsWithAnswersByTestId(testId: Int): Single<List<QuestionWithAnswers>>
+
     @Insert
     fun addQuestion(question: Question): Single<Long>
 

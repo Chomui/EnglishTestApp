@@ -8,11 +8,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import chi.englishtest.com.R
+import chi.englishtest.com.data.db.QuestionWithAnswers
 import chi.englishtest.com.data.db.entity.Question
 import kotlinx.android.synthetic.main.recycler_question.view.*
 
 class QuestionAdapter(private val onQuestionClickGlobalListener: OnQuestionClickListener) :
-    ListAdapter<Question, QuestionAdapter.QuestionItemViewHolder>(QuestionDiffCallback()) {
+    ListAdapter<QuestionWithAnswers, QuestionAdapter.QuestionItemViewHolder>(QuestionDiffCallback()) {
 
     interface OnQuestionClickListener {
         fun onQuestionClick(id: Int)
@@ -44,9 +45,9 @@ class QuestionAdapter(private val onQuestionClickGlobalListener: OnQuestionClick
             onQuestionLocalListener.onQuestionClick(adapterPosition)
         }
 
-        fun bindTo(data: Question) {
-            questionText.text = data.question
-            if (data.userChoice != null) {
+        fun bindTo(data: QuestionWithAnswers) {
+            questionText.text = data.question?.question
+            if (data.question?.userChoice != null) {
                 questionImage.setImageResource(R.drawable.drawable_checkmark)
             } else {
                 questionImage.setImageResource(R.drawable.drawable_x)

@@ -16,86 +16,87 @@ import chi.englishtest.com.data.fragment.BaseFragment
 import chi.englishtest.com.data.fragment.allquestions.AllQuestionsFragment
 import chi.englishtest.com.data.sharedPref.SharedManager
 import chi.englishtest.com.network.Injection
+import chi.englishtest.com.utils.QuestionProvider
 import kotlinx.android.synthetic.main.fragment_question.*
 
 class QuestionFragment : BaseFragment<QuestionPresenter, QuestionView>(), QuestionView {
-
-    companion object{
-        var currentQuestionIndex: Int = 0
-
-        fun newInstance(context: Context, adapterPosition: Int): QuestionFragment {
-            val fragment = QuestionFragment()
-            val args: Bundle = Bundle()
-            args.putInt("position", adapterPosition)
-            fragment.arguments = args
-            return fragment
-        }
-    }
-
-    private var questions: List<Question>? = GrammarActivity.questions
-    private var answers: List<Answer>? = null
 
     override fun provideLayout(): Int = R.layout.fragment_question
 
     override fun injectRepository(): QuestionPresenter = QuestionPresenterImpl(activity?.applicationContext as Injection)
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        if(arguments != null) {
-            currentQuestionIndex = arguments!!.getInt("position", 0)
-        }
-        //presenter.getQuestions(SharedManager.TEST_ID)
-        presenter.getAnswers(questions!![currentQuestionIndex].id!!)
-        return super.onCreateView(inflater, container, savedInstanceState)
-    }
+    private var isDataSetting: Boolean = true
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        radioGroupQuestion.setOnCheckedChangeListener { p0, p1 ->
-            when(p1) {
-                R.id.radioButtonFirst -> {
-                    radioGroupQuestion.clearCheck()
-                    presenter.setAnswer(questions!![currentQuestionIndex], answers!!.first().id)
-                }
-                R.id.radioButtonSecond -> {
-                    radioGroupQuestion.clearCheck()
-                    presenter.setAnswer(questions!![currentQuestionIndex], answers!![1].id)
-                }
-                R.id.radioButtonThird -> {
-                    radioGroupQuestion.clearCheck()
-                    presenter.setAnswer(questions!![currentQuestionIndex], answers!![2].id)
-                }
-                R.id.radioButtonFourth -> {
-                    radioGroupQuestion.clearCheck()
-                    presenter.setAnswer(questions!![currentQuestionIndex], answers!![3].id)
-                }
-            }
-        }
+
+        setQuestionToUi()
     }
-
-    /*override fun setDataQuestions(questions: List<Question>) {
-        this.questions = questions
-        presenter.getAnswers(questions[currentQuestionIndex].id!!)
-    }*/
-
-    override fun showQuestion(answers: List<Answer>) {
-        this.answers = answers
-        textViewQuestion.text = questions!![currentQuestionIndex].question
-        radioButtonFirst.text = answers.first().answer
-        radioButtonSecond.text = answers[1].answer
-        radioButtonThird.text = answers[2].answer
-        radioButtonFourth.text = answers[3].answer
-    }
-
     override fun setNextQuestion() {
-        if (currentQuestionIndex < questions!!.size.minus(1)) {
-            currentQuestionIndex++
-            presenter.getAnswers(questions!![currentQuestionIndex].id!!)
+        if (QuestionProvider.currentIndexPosition < QuestionProvider.questions!!.size.minus(1)) {
+            QuestionProvider.currentIndexPosition++
+            setQuestionToUi()
         } else {
             Toast.makeText(view?.context, "Вопросы закончились", Toast.LENGTH_SHORT).show()
         }
     }
 
     override fun buttonOnClickListener() {
+        radioGroupQuestion.setOnCheckedChangeListener(onCheckedChangeListener())
+    }
 
+    private fun onCheckedChangeListener() =
+        RadioGroup.OnCheckedChangeListener { p0, p1 ->
+            if(!isDataSetting) {
+                val currentQuestion =
+                    QuestionProvider.questions!![QuestionProvider.currentIndexPosition]
+                when (p1) {
+                    R.id.radioButtonFirst -> {
+                        presenter.setAnswer(currentQuestion, currentQuestion.answers!!.first().id)
+                    }
+                    R.id.radioButtonSecond -> {
+                        presenter.setAnswer(currentQuestion, currentQuestion.answers!![1].id)
+                    }
+                    R.id.radioButtonThird -> {
+                        presenter.setAnswer(currentQuestion, currentQuestion.answers!![2].id)
+                    }
+                    R.id.radioButtonFourth -> {
+                        presenter.setAnswer(currentQuestion, currentQuestion.answers!![3].id)
+                    }
+                }
+            }
+        }
+
+    private fun setQuestionToUi() {
+        isDataSetting = true
+        val currentQuestion = QuestionProvider.questions!![QuestionProvider.currentIndexPosition]
+        val answers = currentQuestion.answers
+        textViewQuestion.text = currentQuestion.question?.question
+        radioButtonFirst.text = answers?.first()?.answer
+        radioButtonSecond.text = answers?.get(1)?.answer
+        radioButtonThird.text = answers?.get(2)?.answer
+        radioButtonFourth.text = answers?.get(3)?.answer
+
+        val userChoice = currentQuestion.question?.userChoice
+        if (userChoice != null) {
+            when (userChoice) {
+                answers?.first()?.id -> radioButtonFirst.isChecked = true
+
+                answers?.get(1)?.id -> radioButtonSecond.isChecked = true
+
+                answers?.get(2)?.id -> radioButtonThird.isChecked = true
+
+                answers?.get(3)?.id -> radioButtonFourth.isChecked = true
+            }
+        }
+        isDataSetting = false
     }
 }
+
+/*
+textViewQuestion.text = questions[currentQuestionIndex].question
+        radioButtonFirst.text = answers.first().answer
+        radioButtonSecond.text = answers[1].answer
+        radioButtonThird.text = answers[2].answer
+        radioButtonFourth.text = answers[3].answer
+ */

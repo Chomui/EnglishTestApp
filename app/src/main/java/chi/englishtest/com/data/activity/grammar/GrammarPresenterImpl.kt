@@ -8,6 +8,7 @@ import chi.englishtest.com.data.db.entity.Question
 import chi.englishtest.com.data.db.entity.Test
 import chi.englishtest.com.model.net.question.QuestionResponse
 import chi.englishtest.com.network.Injection
+import chi.englishtest.com.utils.QuestionProvider
 import chi.englishtest.com.utils.answersToUiModel
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -21,19 +22,21 @@ class GrammarPresenterImpl(private val injection: Injection) :
     override fun getTest(id: Int) {
         var questions: List<QuestionResponse> = emptyList()
         viewRef?.get()?.startLoadingDialog()
-        db.questionDao().getQuestionsByTestId(id)
+        db.questionDao().getQuestionsWithAnswersByTestId(id)
             .toObservable()
             .subscribeOn(Schedulers.io())
             .flatMap {
                 if (it.isEmpty()) {
-                   // loadQuestionsNetworkAndCache(id, questions)
+                    // loadQuestionsNetworkAndCache(id, questions)
                     restApi.getQuestionsByTestId(id)
                         .toObservable()
                         .map {
                             questions = it
-                            val list: MutableList<Question> = ArrayList<Question>()
-                            for(question in it) {
-                                list.add(Question(question.id!!, question.question!!, question.testId!!))
+                            val list: MutableList<Question> = ArrayList()
+                            for (question in it) {
+                                list.add(
+                                    Question(question.id!!, question.question!!, question.testId!!)
+                                )
                             }
                             list
                         }
@@ -42,15 +45,16 @@ class GrammarPresenterImpl(private val injection: Injection) :
                         }
                         .flatMapIterable { questions }
                         .flatMap { db.answerDao().addAllAnswer(it.answersToUiModel()).toObservable() }
-                        .flatMap { db.questionDao().getQuestionsByTestId(id).toObservable() }
+                        .flatMap { db.questionDao().getQuestionsWithAnswersByTestId(id).toObservable() }
                 } else {
                     Observable.just(it)
                 }
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(Consumer {
+                QuestionProvider.questions = it
                 viewRef?.get()?.stopLoadingDialog()
-                viewRef?.get()?.openQuestionFragment(it)
+                viewRef?.get()?.openQuestionFragment()
             }, getDefaultErrorConsumer())
     }
 

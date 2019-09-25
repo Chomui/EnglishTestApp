@@ -14,10 +14,15 @@ import chi.englishtest.com.data.activity.grammar.GrammarActivity
 import chi.englishtest.com.data.db.entity.Question
 import chi.englishtest.com.data.fragment.BaseFragment
 import chi.englishtest.com.network.Injection
+import chi.englishtest.com.utils.QuestionProvider
 import kotlinx.android.synthetic.main.fragment_all_questions.*
 
 class AllQuestionsFragment(private val callback: OpenQuestionFragment)
     : BaseFragment<AllQuestionsPresenter, AllQuestionsView>(), AllQuestionsView, QuestionAdapter.OnQuestionClickListener {
+
+    interface OpenQuestionFragment {
+        fun fromAllToQuestionFragment()
+    }
 
     override fun provideLayout(): Int = R.layout.fragment_all_questions
 
@@ -31,18 +36,14 @@ class AllQuestionsFragment(private val callback: OpenQuestionFragment)
         recyclerViewAllQuestions.layoutManager = LinearLayoutManager(view.context)
         recyclerViewAllQuestions.adapter = adapter
 
-        adapter.submitList(GrammarActivity.questions)
-    }
-
-    interface OpenQuestionFragment {
-        fun fromAllToQuestionFragment(position: Int)
+        adapter.submitList(QuestionProvider.questions)
     }
 
     override fun onQuestionClick(id: Int) {
-        callback.fromAllToQuestionFragment(id)
+        QuestionProvider.currentIndexPosition = id
+        callback.fromAllToQuestionFragment()
     }
 
     override fun buttonOnClickListener() {
     }
-
 }
