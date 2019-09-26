@@ -14,7 +14,7 @@ import io.reactivex.schedulers.Schedulers
 class QuestionPresenterImpl(private val injection: Injection) : BasePresenterImpl<QuestionView>(injection), QuestionPresenter{
 
     override fun setAnswer(question: QuestionWithAnswers, answerId: Int) {
-        viewRef?.get()?.startLoadingDialog()
+        //viewRef?.get()?.startLoadingDialog()
         Log.e("Retrofit", "$question: $answerId")
         question.question?.userChoice = answerId
         db.questionDao()
@@ -22,10 +22,7 @@ class QuestionPresenterImpl(private val injection: Injection) : BasePresenterImp
             .subscribeOn(Schedulers.io())
             .toObservable()
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                viewRef?.get()?.stopLoadingDialog()
-                viewRef?.get()?.setNextQuestion()
-            }
+            .subscribe {}
         // Some code to set answer to a server
 
     }

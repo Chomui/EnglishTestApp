@@ -23,6 +23,7 @@ class LoginActivity : BaseActivity<LoginPresenter, LoginView>(), LoginView {
     override fun login() {
         Toast.makeText(this, SharedManager.accessToken, Toast.LENGTH_LONG).show()
         startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 
     private fun signIn() {

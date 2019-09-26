@@ -21,6 +21,7 @@ class SplashActivity : BaseActivity<SplashPresenter, SplashView>(), SplashView {
         } else {
             startActivity(Intent(this, MainActivity::class.java))
         }
+        finish()
     }
 
     override fun buttonOnClickListener() {}

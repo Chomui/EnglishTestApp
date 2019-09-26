@@ -6,6 +6,6 @@ import chi.englishtest.com.data.db.entity.Question
 class QuestionProvider {
     companion object {
         var currentIndexPosition: Int = 0
-        var questions: List<QuestionWithAnswers>? = null
+        var questions: MutableList<QuestionWithAnswers> = ArrayList()
     }
 }

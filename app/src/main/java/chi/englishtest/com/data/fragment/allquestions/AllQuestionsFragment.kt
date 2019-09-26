@@ -17,12 +17,8 @@ import chi.englishtest.com.network.Injection
 import chi.englishtest.com.utils.QuestionProvider
 import kotlinx.android.synthetic.main.fragment_all_questions.*
 
-class AllQuestionsFragment(private val callback: OpenQuestionFragment)
+class AllQuestionsFragment
     : BaseFragment<AllQuestionsPresenter, AllQuestionsView>(), AllQuestionsView, QuestionAdapter.OnQuestionClickListener {
-
-    interface OpenQuestionFragment {
-        fun fromAllToQuestionFragment()
-    }
 
     override fun provideLayout(): Int = R.layout.fragment_all_questions
 
@@ -41,9 +37,8 @@ class AllQuestionsFragment(private val callback: OpenQuestionFragment)
 
     override fun onQuestionClick(id: Int) {
         QuestionProvider.currentIndexPosition = id
-        callback.fromAllToQuestionFragment()
+        (activity as GrammarActivity).openQuestionFragment()
     }
 
-    override fun buttonOnClickListener() {
-    }
+    override fun buttonOnClickListener() {}
 }

@@ -3,6 +3,7 @@ package chi.englishtest.com.data.activity.grammar
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.fragment.app.FragmentTransaction
 import chi.englishtest.com.R
 import chi.englishtest.com.data.activity.BaseActivity
 import chi.englishtest.com.data.db.entity.Question
@@ -12,7 +13,7 @@ import chi.englishtest.com.data.sharedPref.SharedManager
 import chi.englishtest.com.network.Injection
 import kotlinx.android.synthetic.main.activity_grammar.*
 
-class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarView, AllQuestionsFragment.OpenQuestionFragment  {
+class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarView {
 
     override fun injectRepository(): GrammarPresenter = GrammarPresenterImpl(applicationContext as Injection)
 
@@ -28,12 +29,9 @@ class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarVi
 
     override fun openQuestionFragment() {
         supportFragmentManager.beginTransaction()
+            .setCustomAnimations(R.animator.slide_in_left, R.animator.slide_in_right)
             .replace(R.id.fragmentPlace, QuestionFragment())
             .commit()
-    }
-
-    override fun fromAllToQuestionFragment() {
-        openQuestionFragment()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -45,7 +43,8 @@ class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarVi
         when (item.itemId) {
             R.id.action_show -> {
                 supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragmentPlace, AllQuestionsFragment(this))
+                    .setCustomAnimations(R.animator.slide_in_left, R.animator.slide_in_right)
+                    .replace(R.id.fragmentPlace, AllQuestionsFragment())
                     .commit()
             }
         }

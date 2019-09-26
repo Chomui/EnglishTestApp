@@ -50,9 +50,13 @@ class GrammarPresenterImpl(private val injection: Injection) :
                     Observable.just(it)
                 }
             }
+            .map {
+                for(i in 0..50) {
+                    QuestionProvider.questions?.addAll(it)
+                }
+            }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(Consumer {
-                QuestionProvider.questions = it
                 viewRef?.get()?.stopLoadingDialog()
                 viewRef?.get()?.openQuestionFragment()
             }, getDefaultErrorConsumer())
