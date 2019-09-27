@@ -50,4 +50,5 @@
             android:padding="25dp"
             android:text="RadioButton" />
     </RadioGroup>
+
 </RelativeLayout>

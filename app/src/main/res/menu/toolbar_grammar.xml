@@ -2,7 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/countdown_timer"
+        android:title="timer"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/action_show"
         android:title="Show"
-        app:showAsAction="always"/>
+        app:showAsAction="always" />
 </menu>

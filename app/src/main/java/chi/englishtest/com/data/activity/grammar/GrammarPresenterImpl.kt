@@ -46,6 +46,7 @@ class GrammarPresenterImpl(private val injection: Injection) :
                             db.answerDao().addAllAnswer(it.answersToUiModel()).toObservable()
                         }
                 } else {
+                    QuestionProvider.questions = it
                     Observable.just(it)
                 }
             }
