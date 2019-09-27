@@ -3,6 +3,7 @@ package chi.englishtest.com.data.activity.grammar
 import android.util.Log
 import androidx.room.EmptyResultSetException
 import chi.englishtest.com.data.activity.BasePresenterImpl
+import chi.englishtest.com.data.db.QuestionWithAnswers
 import chi.englishtest.com.data.db.entity.Answer
 import chi.englishtest.com.data.db.entity.Question
 import chi.englishtest.com.data.db.entity.Test
@@ -25,35 +26,35 @@ class GrammarPresenterImpl(private val injection: Injection) :
         db.questionDao().getQuestionsWithAnswersByTestId(id)
             .toObservable()
             .subscribeOn(Schedulers.io())
-            .flatMap {
+            .flatMap { it ->
                 if (it.isEmpty()) {
                     // loadQuestionsNetworkAndCache(id, questions)
                     restApi.getQuestionsByTestId(id)
                         .toObservable()
                         .map {
-                            questions = it
-                            val list: MutableList<Question> = ArrayList()
-                            for (question in it) {
-                                list.add(
-                                    Question(question.id!!, question.question!!, question.testId!!)
-                                )
+                            questions = ArrayList(it)
+                            QuestionProvider.questions = it.map { question ->
+                                QuestionWithAnswers(Question(question.id!!, question.question!!, question.testId!!), question.answersToUiModel())
                             }
-                            list
+                            it.map { question -> Question(question.id!!, question.question!!, question.testId!!)}
                         }
                         .flatMap {
                             db.questionDao().addAllQuestions(it).toObservable()
                         }
                         .flatMapIterable { questions }
-                        .flatMap { db.answerDao().addAllAnswer(it.answersToUiModel()).toObservable() }
-                        .flatMap { db.questionDao().getQuestionsWithAnswersByTestId(id).toObservable() }
+                        .flatMap {
+                            db.answerDao().addAllAnswer(it.answersToUiModel()).toObservable()
+                        }
                 } else {
                     Observable.just(it)
                 }
             }
             .map {
-                for(i in 0..50) {
-                    QuestionProvider.questions?.addAll(it)
+                val list: MutableList<QuestionWithAnswers> = ArrayList()
+                for(i in 0..100) {
+                    list.addAll(QuestionProvider.questions)
                 }
+                QuestionProvider.questions = list
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(Consumer {
@@ -61,45 +62,4 @@ class GrammarPresenterImpl(private val injection: Injection) :
                 viewRef?.get()?.openQuestionFragment()
             }, getDefaultErrorConsumer())
     }
-
-//    private fun loadQuestionsNetworkAndCache(id: Int, q: List<QuestionResponse>) =
-//
-//
-//    private fun loadAnswersNetworkAndCache(id: Int) =
-//        restApi.getQuestionsByTestId(id)
-//            .toObservable()
-//            .flatMapIterable { it }
-//            .flatMap {
-//                db.answerDao().addAllAnswer(it.answersToUiModel())
-//                    .toObservable()
-
-    /*
-    override fun testsIsEmpty() {
-        viewRef?.get()?.startLoadingDialog()
-        db.testDao()
-            .getAllTests()
-            .toObservable()
-            .subscribeOn(Schedulers.io())
-            .flatMap {
-                if(it.isEmpty()){
-                    loadFromNetworkAndCache()
-                }else{
-                    Observable.just(it)
-                }
-            }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                viewRef?.get()?.stopLoadingDialog()
-                viewRef?.get()?.openGrammar()
-            }
-    }
-
-    private fun loadFromNetworkAndCache() =
-        restApi.getTests()
-            .toObservable()
-            .flatMapIterable { it }
-            .flatMap {
-                db.testDao().addTest(Test(it.id!!, it.name!!, it.description!!)).toObservable()
-            }
-     */
 }

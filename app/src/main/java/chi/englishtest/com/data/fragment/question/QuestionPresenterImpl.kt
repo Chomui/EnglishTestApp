@@ -24,6 +24,7 @@ class QuestionPresenterImpl(private val injection: Injection) : BasePresenterImp
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {}
         // Some code to set answer to a server
+        viewRef?.get()?.setNextQuestion()
 
     }
 

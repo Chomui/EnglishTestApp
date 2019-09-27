@@ -38,14 +38,14 @@ class QuestionFragment : BaseFragment<QuestionPresenter, QuestionView>(), Questi
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view =  super.onCreateView(inflater, container, savedInstanceState)
 
-        /*radioGroupQuestion = view?.findViewById(R.id.radioGroupQuestion)
+        radioGroupQuestion = view?.findViewById(R.id.radioGroupQuestion)
         textViewQuestion = view?.findViewById(R.id.textViewQuestion)
         radioButtonFirst = view?.findViewById(R.id.radioButtonFirst)
         radioButtonSecond = view?.findViewById(R.id.radioButtonSecond)
         radioButtonThird = view?.findViewById(R.id.radioButtonThird)
-        radioButtonFourth = view?.findViewById(R.id.radioButtonFourth)*/
+        radioButtonFourth = view?.findViewById(R.id.radioButtonFourth)
 
-        //setQuestionToUi()
+        setQuestionToUi()
 
         return view
     }
@@ -61,10 +61,10 @@ class QuestionFragment : BaseFragment<QuestionPresenter, QuestionView>(), Questi
     }
 
     override fun buttonOnClickListener() {
-       // radioGroupQuestion?.setOnCheckedChangeListener(onCheckedChangeListener())
+        radioGroupQuestion?.setOnCheckedChangeListener(onCheckedChangeListener())
     }
 
-    /*private fun onCheckedChangeListener() =
+    private fun onCheckedChangeListener() =
         RadioGroup.OnCheckedChangeListener { p0, p1 ->
             if(!isDataSetting) {
                 val currentQuestion =
@@ -84,9 +84,9 @@ class QuestionFragment : BaseFragment<QuestionPresenter, QuestionView>(), Questi
                     }
                 }
             }
-        }*/
+        }
 
-    /*private fun setQuestionToUi() {
+    private fun setQuestionToUi() {
 
         val currentQuestion = QuestionProvider.questions[QuestionProvider.currentIndexPosition]
         val answers = currentQuestion.answers
@@ -110,5 +110,5 @@ class QuestionFragment : BaseFragment<QuestionPresenter, QuestionView>(), Questi
             }
         }
         isDataSetting = false
-    }*/
+    }
 }
