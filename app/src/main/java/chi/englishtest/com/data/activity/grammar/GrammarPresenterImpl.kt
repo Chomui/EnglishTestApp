@@ -32,7 +32,7 @@ class GrammarPresenterImpl(private val injection: Injection) :
                     restApi.getQuestionsByTestId(id)
                         .toObservable()
                         .map {
-                            questions = ArrayList(it)
+                            questions = it
                             QuestionProvider.questions = it.map { question ->
                                 QuestionWithAnswers(Question(question.id!!, question.question!!, question.testId!!), question.answersToUiModel())
                             }

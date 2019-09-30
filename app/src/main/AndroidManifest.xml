@@ -24,6 +24,7 @@
             android:theme="@style/AppThemeNoActionBar" />
         <activity android:name=".data.activity.main.MainActivity" />
         <activity android:name=".data.activity.login.LoginActivity"/>
+        <service android:name=".utils.CountDownTimerService"/>
     </application>
 
 </manifest>

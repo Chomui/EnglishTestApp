@@ -14,6 +14,7 @@ object SharedManager {
     private const val USER_PASSWORD: String = "USER_PASSWORD"
     private const val USER_ID: String = "USER_ID"
     private const val IS_TEACHER: String = "IS_TEACHER"
+    public const val COUNT_DOWN_TIMER_INFO = "COUNT_DOWN_TIMER_INFO"
     const val DEFAULT: String = "DEFAULT"
     const val TEST_ID: Int = 98
 
