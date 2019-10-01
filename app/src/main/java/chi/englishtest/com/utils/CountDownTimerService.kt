@@ -47,12 +47,12 @@ class CountDownTimerService : Service() {
 
         builder.let {
             it?.setSmallIcon(R.mipmap.ic_launcher)
-            it?.setContentTitle("Test")
+            it?.setContentTitle("Grammar Test")
             it?.setContentText("Foreground")
             it?.setContentIntent(pendingIntent)
         }
 
-        timer = Counter(3000000, 1000)
+        timer = Counter(30000, 1000)
         timer.let { it?.start() }
 
         startForeground(1, builder.let { it?.build() })
@@ -79,42 +79,19 @@ class CountDownTimerService : Service() {
             timerInfoIntent.putExtra("VALUE", hms)
             LocalBroadcastManager.getInstance(this@CountDownTimerService).sendBroadcast(timerInfoIntent)
 
-            ////////////////
-            val pendingIntent: PendingIntent =
-                Intent(this@CountDownTimerService, GrammarActivity::class.java).let { notificationIntent ->
-                    PendingIntent.getActivity(this@CountDownTimerService, 0, notificationIntent, 0)
-                }
-
-            val notificationManager =
-                this@CountDownTimerService.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            var builder: NotificationCompat.Builder? = null
-
-            builder = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                val importance: Int = NotificationManager.IMPORTANCE_DEFAULT
-                val notificationChannel =
-                    NotificationChannel("timer", "CountDownTimer", importance)
-                notificationManager.createNotificationChannel(notificationChannel)
-                NotificationCompat.Builder(applicationContext, notificationChannel.id)
-            } else {
-                NotificationCompat.Builder(applicationContext)
-            }
-
-            builder = builder
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("Test")
-                .setContentText(hms)
-                .setContentIntent(pendingIntent)
-
-            notificationManager.notify(1, builder.build())
+            builder?.setContentText(hms)
+            notificationManager?.notify(1, builder?.build())
         }
 
         override fun onFinish() {
             val timerInfoIntent = Intent(SharedManager.COUNT_DOWN_TIMER_INFO)
             timerInfoIntent.putExtra("VALUE", "Completed")
             LocalBroadcastManager.getInstance(this@CountDownTimerService).sendBroadcast(timerInfoIntent)
+            stopForeground(false)
+            builder?.setContentText("Time is running out. Responses will be sent if you have Internet, or when he will appear")
+            builder?.setAutoCancel(true)
+            notificationManager?.notify(1, builder?.build())
         }
-
     }
-
 }
 

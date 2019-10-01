@@ -17,7 +17,7 @@ import chi.englishtest.com.network.Injection
 import chi.englishtest.com.utils.CountDownTimerService
 import kotlinx.android.synthetic.main.activity_grammar.*
 import android.app.ActivityManager
-
+import chi.englishtest.com.utils.ServiceManager
 
 
 class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarView {
@@ -31,7 +31,7 @@ class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarVi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if(!isMyServiceRunning(CountDownTimerService::class.java)) {
+        if(!ServiceManager.isMyServiceRunning(this, CountDownTimerService::class.java)) {
             Intent(this, CountDownTimerService::class.java).also {
                 startService(it)
             }
@@ -89,13 +89,5 @@ class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarVi
 
     override fun buttonOnClickListener() {}
 
-    private fun isMyServiceRunning(serviceClass: Class<*>): Boolean {
-        val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        for (service in manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.name == service.service.className) {
-                return true
-            }
-        }
-        return false
-    }
+
 }
