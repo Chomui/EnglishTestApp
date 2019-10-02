@@ -71,16 +71,16 @@ class QuestionFragment : BaseFragment<QuestionPresenter, QuestionView>(), Questi
                     QuestionProvider.questions[QuestionProvider.currentIndexPosition]
                 when (p1) {
                     R.id.radioButtonFirst -> {
-                        presenter.setAnswer(currentQuestion, currentQuestion.answers!!.first().id)
+                        presenter.setAnswer(activity!!.applicationContext, currentQuestion, currentQuestion.answers!!.first().id)
                     }
                     R.id.radioButtonSecond -> {
-                        presenter.setAnswer(currentQuestion, currentQuestion.answers!![1].id)
+                        presenter.setAnswer(activity!!.applicationContext, currentQuestion, currentQuestion.answers!![1].id)
                     }
                     R.id.radioButtonThird -> {
-                        presenter.setAnswer(currentQuestion, currentQuestion.answers!![2].id)
+                        presenter.setAnswer(activity!!.applicationContext, currentQuestion, currentQuestion.answers!![2].id)
                     }
                     R.id.radioButtonFourth -> {
-                        presenter.setAnswer(currentQuestion, currentQuestion.answers!![3].id)
+                        presenter.setAnswer(activity!!.applicationContext, currentQuestion, currentQuestion.answers!![3].id)
                     }
                 }
             }

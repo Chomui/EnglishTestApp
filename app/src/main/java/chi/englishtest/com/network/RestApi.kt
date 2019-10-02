@@ -4,9 +4,11 @@ import chi.englishtest.com.model.net.login.LogInResponse
 import chi.englishtest.com.model.net.logout.LogOutResponse
 import chi.englishtest.com.data.sharedPref.SharedManager
 import chi.englishtest.com.model.net.question.QuestionResponse
+import chi.englishtest.com.model.net.results.ResultResponse
 import chi.englishtest.com.model.net.test.TestResponse
 import io.reactivex.Single
 import okhttp3.RequestBody
+import retrofit2.Response
 import retrofit2.http.*
 
 interface RestApi {
@@ -23,4 +25,11 @@ interface RestApi {
 
     @GET("questions")
     fun getQuestionsByTestId(@Query("test_id") testId: Int): Single<List<QuestionResponse>>
+
+    @Multipart
+    @PUT("results")
+    fun setAnswer(@Part("question_id") questionID: RequestBody,
+                  @Part("answer_id") answerID: RequestBody)
+            : Single<Response<ResultResponse>>
+
 }

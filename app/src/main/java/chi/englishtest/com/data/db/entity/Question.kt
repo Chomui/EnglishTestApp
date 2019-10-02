@@ -1,23 +1,33 @@
 package chi.englishtest.com.data.db.entity
 
 import androidx.room.*
+import chi.englishtest.com.data.db.EnglishContract
 
 @Entity
 class Question {
     @PrimaryKey @ColumnInfo(name = "_id") var id: Int? = null
     var question: String? = null
-    @ColumnInfo(name = "test_id") var testId: Int? = null
-    @ColumnInfo(name = "user_choice") var userChoice: Int? = null
+    @ColumnInfo(name = EnglishContract.EnglishQuestion.TEST_ID) var testId: Int? = null
+    @ColumnInfo(name = EnglishContract.EnglishQuestion.USER_CHOICE) var userChoice: Int? = null
+    @ColumnInfo(name = EnglishContract.EnglishQuestion.NOT_SENT) var notSent: Int? = null
 
     constructor(id: Int?, question: String?, testId: Int?) {
         this.id = id
         this.question = question
         this.testId = testId
-        this.userChoice = null
     }
 
     @Ignore
-    constructor(id: Int?, question: String?, testId: Int?, userChoice: Int) {
+    constructor(id: Int?, question: String?, testId: Int?, userChoice: Int?, notSent: Int?) {
+        this.id = id
+        this.question = question
+        this.testId = testId
+        this.userChoice = userChoice
+        this.notSent = notSent
+    }
+
+    @Ignore
+    constructor(id: Int?, question: String?, testId: Int?, userChoice: Int?) {
         this.id = id
         this.question = question
         this.testId = testId

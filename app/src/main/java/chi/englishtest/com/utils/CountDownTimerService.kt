@@ -87,10 +87,10 @@ class CountDownTimerService : Service() {
             val timerInfoIntent = Intent(SharedManager.COUNT_DOWN_TIMER_INFO)
             timerInfoIntent.putExtra("VALUE", "Completed")
             LocalBroadcastManager.getInstance(this@CountDownTimerService).sendBroadcast(timerInfoIntent)
-            stopForeground(false)
             builder?.setContentText("Time is running out. Responses will be sent if you have Internet, or when he will appear")
             builder?.setAutoCancel(true)
             notificationManager?.notify(1, builder?.build())
+            stopSelf()
         }
     }
 }

@@ -17,6 +17,8 @@ class EnglishContract private constructor(){
             const val TABLE_NAME = "question"
             const val QUESTION = "question"
             const val TEST_ID = "test_id"
+            const val USER_CHOICE = "user_choice"
+            const val NOT_SENT = "not_sent"
         }
     }
 
