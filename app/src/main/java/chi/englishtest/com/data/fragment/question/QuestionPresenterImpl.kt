@@ -2,58 +2,89 @@ package chi.englishtest.com.data.fragment.question
 
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
-import chi.englishtest.com.data.activity.grammar.GrammarActivity
+import androidx.work.*
 import chi.englishtest.com.data.db.QuestionWithAnswers
 import chi.englishtest.com.data.db.entity.Question
 import chi.englishtest.com.data.fragment.BasePresenterImpl
 import chi.englishtest.com.network.Injection
-import chi.englishtest.com.utils.QuestionProvider
+import chi.englishtest.com.utils.QuestionSetAnswerWorker
 import chi.englishtest.com.utils.ServiceManager
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
+import okhttp3.MediaType
+import okhttp3.RequestBody
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 class QuestionPresenterImpl(private val injection: Injection) :
     BasePresenterImpl<QuestionView>(injection), QuestionPresenter {
 
     override fun setAnswer(context: Context, question: QuestionWithAnswers, answerId: Int) {
         //viewRef?.get()?.startLoadingDialog()
-        Log.e("Retrofit", "$question: $answerId")
+        //Log.e("Retrofit", "$question: $answerId")
         question.question?.userChoice = answerId
         if (ServiceManager.isNetworkAvailable(context)) {
-            //Todo: sent question to server
-            db.questionDao()
-                .updateQuestion(
-                    Question(
-                        question.question?.id,
-                        question.question?.question,
-                        question.question?.testId,
-                        answerId
-                    )
-                )
+            //TODO: sent question to server
+
+            val questionID: RequestBody = RequestBody.create(MediaType.parse("text/plain"), question.question?.id.toString())
+            val answerID: RequestBody = RequestBody.create(MediaType.parse("text/plain"), question.question?.userChoice.toString())
+
+            restApi.setAnswer(questionID, answerID)
                 .subscribeOn(Schedulers.io())
                 .toObservable()
+                .flatMap {
+                    if (it.isSuccessful) {
+                        setQuestionWithNoSentStatus(question, answerId, 0)
+                    } else {
+                        Log.e("Retrofit", "Answer is not sent, code: ${it.code()}")
+                        setQuestionWithNoSentStatus(question, answerId, 1)
+                    }
+                }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {}
+                .subscribe(Consumer {}, getDefaultErrorConsumer())
+
         } else {
-            db.questionDao()
-                .updateQuestion(
-                    Question(
-                        question.question?.id,
-                        question.question?.question,
-                        question.question?.testId,
-                        answerId,
-                        1
-                    )
-                )
-                .subscribeOn(Schedulers.io())
-                .toObservable()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {}
+            setQuestionWithNoSentStatus(question, answerId, 1)
+            setAnswerWhenInternetAppear(context)
         }
 
         viewRef?.get()?.setNextQuestion()
+    }
 
+
+    private fun setQuestionWithNoSentStatus(question: QuestionWithAnswers, answerId: Int, noSent: Int ): Observable<Int> {
+        return db.questionDao()
+            .updateQuestion(
+                Question(
+                    question.question?.id,
+                    question.question?.question,
+                    question.question?.testId,
+                    answerId,
+                    noSent
+                )
+            )
+            .subscribeOn(Schedulers.io())
+            .toObservable()
+    }
+
+    private fun setAnswerWhenInternetAppear(context: Context) {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val setQuestionWorkRequest = OneTimeWorkRequestBuilder<QuestionSetAnswerWorker>()
+            .setConstraints(constraints)
+            .setBackoffCriteria(
+                BackoffPolicy.LINEAR,
+                OneTimeWorkRequest.MIN_BACKOFF_MILLIS,
+                TimeUnit.MILLISECONDS
+            )
+            .build()
+
+        WorkManager.getInstance(context)
+            .enqueueUniqueWork("setAnswers", ExistingWorkPolicy.KEEP, setQuestionWorkRequest)
     }
 
 }

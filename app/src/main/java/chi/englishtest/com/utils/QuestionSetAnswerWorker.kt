@@ -1,6 +1,7 @@
 package chi.englishtest.com.utils
 
 import android.content.Context
+import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import chi.englishtest.com.data.db.AppDatabase
@@ -27,6 +28,9 @@ class QuestionSetAnswerWorker(appContext: Context, workerParams: WorkerParameter
                 val answerID: RequestBody = RequestBody.create(MediaType.parse("text/plain"), question.userChoice.toString())
                 restApi.setAnswer(questionID, answerID)
                     .doOnSuccess {
+                        if(it.isSuccessful) {
+                            Log.e("Retrofit", "Answer successfully sent to the server")
+                        }
                         result = if(it.code() != null) {
                             when(it.code()) {
                                 408,
