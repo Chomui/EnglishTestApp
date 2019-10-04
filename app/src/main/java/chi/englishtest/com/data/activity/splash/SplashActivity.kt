@@ -20,13 +20,13 @@ class SplashActivity : BaseActivity<SplashPresenter, SplashView>(), SplashView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (SharedManager.accessToken == SharedManager.DEFAULT) {
+            startActivity(Intent(this, LoginActivity::class.java))
+        } else {
             if (ServiceManager.isMyServiceRunning(this, CountDownTimerService::class.java)) {
                 startActivity(Intent(this, GrammarActivity::class.java))
             } else {
-                startActivity(Intent(this, LoginActivity::class.java))
+                startActivity(Intent(this, MainActivity::class.java))
             }
-        } else {
-            startActivity(Intent(this, MainActivity::class.java))
         }
         finish()
     }

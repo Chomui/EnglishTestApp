@@ -20,6 +20,11 @@ interface QuestionDao {
             " WHERE " + EnglishContract.EnglishQuestion.NOT_SENT + " = 1")
     fun getQuestionsUnsent(): Single<List<Question>>
 
+    @Query("UPDATE " + EnglishContract.EnglishQuestion.TABLE_NAME +
+            " SET " + EnglishContract.EnglishQuestion.USER_CHOICE + " = " +
+            " :userChoice WHERE " + EnglishContract.EnglishQuestion.TEST_ID  + " = :testId")
+    fun updateUserChoiceByTestId(testId: Int, userChoice: Int?): Single<Int>
+
     @Insert
     fun addQuestion(question: Question): Single<Long>
 

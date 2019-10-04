@@ -26,10 +26,10 @@ class MainActivity : BaseActivity<MainPresenter, MainView>(), MainView {
     }
 
     override fun buttonOnClickListener() {
-        buttonGrammar.setOnClickListener { openGrammar() }
+        buttonGrammar.setOnClickListener { presenter.updateDbForGrammarTest(this) }
     }
 
-    private fun openGrammar() {
+    override fun openGrammar() {
         Toast.makeText(this, SharedManager.accessToken, Toast.LENGTH_LONG).show()
         startActivity(Intent(this, GrammarActivity::class.java))
     }

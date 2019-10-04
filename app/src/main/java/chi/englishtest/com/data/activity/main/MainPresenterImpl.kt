@@ -1,8 +1,16 @@
 package chi.englishtest.com.data.activity.main
 
+import android.content.Context
+import android.content.Intent
 import chi.englishtest.com.data.activity.BasePresenterImpl
+import chi.englishtest.com.data.activity.grammar.GrammarActivity
+import chi.englishtest.com.data.db.entity.Question
 import chi.englishtest.com.data.db.entity.Test
+import chi.englishtest.com.data.sharedPref.SharedManager
 import chi.englishtest.com.network.Injection
+import chi.englishtest.com.utils.CountDownTimerService
+import chi.englishtest.com.utils.QuestionProvider
+import chi.englishtest.com.utils.ServiceManager
 import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Consumer
@@ -28,6 +36,39 @@ class MainPresenterImpl(private var injection: Injection) : BasePresenterImpl<Ma
             .subscribe( Consumer {
                 viewRef?.get()?.stopLoadingDialog()
             }, getDefaultErrorConsumer())
+    }
+
+    override fun updateDbForGrammarTest(context: Context) {
+        viewRef?.get()?.startLoadingDialog()
+        /*val questions: MutableList<Question> = ArrayList<Question>()
+        for(question in QuestionProvider.questions) {
+            val questionFromProvider = question.question!!
+            questionFromProvider.userChoice = null
+            questions.add(questionFromProvider)
+        }
+        db.questionDao()
+            .updateQuestions(questions)
+            .subscribeOn(Schedulers.io())
+            .toObservable()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe{
+                viewRef?.get()?.stopLoadingDialog()
+                viewRef?.get()?.openGrammar()
+            }*/
+        if (ServiceManager.isMyServiceRunning(context, CountDownTimerService::class.java)) {
+            viewRef?.get()?.stopLoadingDialog()
+            viewRef?.get()?.openGrammar()
+        } else {
+            db.questionDao()
+                .updateUserChoiceByTestId(SharedManager.TEST_ID, null)
+                .subscribeOn(Schedulers.io())
+                .toObservable()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    viewRef?.get()?.stopLoadingDialog()
+                    viewRef?.get()?.openGrammar()
+                }
+        }
     }
 
     private fun loadFromNetworkAndCache() =

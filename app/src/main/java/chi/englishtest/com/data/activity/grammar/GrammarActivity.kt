@@ -17,6 +17,7 @@ import chi.englishtest.com.network.Injection
 import chi.englishtest.com.utils.CountDownTimerService
 import kotlinx.android.synthetic.main.activity_grammar.*
 import android.app.ActivityManager
+import android.widget.Toast
 import chi.englishtest.com.utils.QuestionProvider
 import chi.englishtest.com.utils.ServiceManager
 
@@ -36,7 +37,7 @@ class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarVi
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        if(!ServiceManager.isMyServiceRunning(this, CountDownTimerService::class.java)) {
+        if (!ServiceManager.isMyServiceRunning(this, CountDownTimerService::class.java)) {
             Intent(this, CountDownTimerService::class.java).also {
                 startService(it)
             }
@@ -46,19 +47,15 @@ class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarVi
         presenter.getTest(SharedManager.TEST_ID)
     }
 
-    override fun onStart() {
-        super.onStart()
-        if (QuestionProvider.testIsDone) {
-            QuestionProvider.testIsDone = false
-            onBackPressed()
-        }
-    }
-
     private val messageReceiver: BroadcastReceiver = object: BroadcastReceiver() {
         override fun onReceive(p0: Context?, p1: Intent?) {
             if(p1 != null && p1.action.equals(SharedManager.COUNT_DOWN_TIMER_INFO)) {
-                if(p1.hasExtra("VALUE")) {
+                if (p1.hasExtra("VALUE")) {
                     menu?.findItem(R.id.countdown_timer)?.title = p1.getStringExtra("VALUE")
+                }
+                if (p1.hasExtra("COMPLETED")) {
+                    Toast.makeText(applicationContext, "Test completed", Toast.LENGTH_LONG).show()
+                    onBackPressed()
                 }
             }
         }

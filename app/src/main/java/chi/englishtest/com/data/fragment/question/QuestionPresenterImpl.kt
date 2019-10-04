@@ -23,6 +23,7 @@ class QuestionPresenterImpl(private val injection: Injection) :
 
     override fun setAnswer(context: Context, question: QuestionWithAnswers, answerId: Int) {
         question.question?.userChoice = answerId
+        setQuestionWithNoSentStatusBlockingGet(question, answerId, 0)
         if (ServiceManager.isNetworkAvailable(context)) {
             val questionID: RequestBody = RequestBody.create(MediaType.parse("text/plain"), question.question?.id.toString())
             val answerID: RequestBody = RequestBody.create(MediaType.parse("text/plain"), question.question?.userChoice.toString())
@@ -34,15 +35,15 @@ class QuestionPresenterImpl(private val injection: Injection) :
                 .flatMap {
                     if (it.isSuccessful) {
                         Log.i("Retrofit", "Network Avaivable, Answer is sent, code: ${it.code()}")
-                        Observable.just(setQuestionWithNoSentStatus(question, answerId, 2))
+                        setQuestionWithNoSentStatus(question, answerId, 2)
                     } else {
                         Log.e("Retrofit", "Network Avaivable, Answer is not sent, code: ${it.code()}")
-                        Observable.just(setQuestionWithNoSentStatus(question, answerId, 1))
+                        setQuestionWithNoSentStatus(question, answerId, 1)
                     }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(Consumer {
-                }, getDefaultErrorConsumer())
+                }, Consumer { getDefaultErrorConsumer() })
         } else {
             Log.e("Retrofit", "Network isn't available, set Worker")
             setQuestionWithNoSentStatusBlockingGet(question, answerId, 1)

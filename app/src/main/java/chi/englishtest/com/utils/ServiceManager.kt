@@ -21,6 +21,7 @@ class ServiceManager private constructor(){
                             hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
                             hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
                             hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+                            hasTransport(NetworkCapabilities.TRANSPORT_VPN) -> true
                             else -> false
                         }
                     }
