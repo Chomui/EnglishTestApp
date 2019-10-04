@@ -9,7 +9,7 @@ import io.reactivex.Single
 interface QuestionDao {
 
     @Query("SELECT * FROM " + EnglishContract.EnglishQuestion.TABLE_NAME +
-        " WHERE " + EnglishContract.EnglishQuestion.TEST_ID + " = :testId")
+            " WHERE " + EnglishContract.EnglishQuestion.TEST_ID + " = :testId")
     fun getQuestionsByTestId(testId: Int): Single<List<Question>>
 
     @Query("SELECT * FROM " + EnglishContract.EnglishQuestion.TABLE_NAME +
@@ -17,7 +17,7 @@ interface QuestionDao {
     fun getQuestionsWithAnswersByTestId(testId: Int): Single<List<QuestionWithAnswers>>
 
     @Query("SELECT * FROM " + EnglishContract.EnglishQuestion.TABLE_NAME +
-        " WHERE " + EnglishContract.EnglishQuestion.NOT_SENT + " = 1")
+            " WHERE " + EnglishContract.EnglishQuestion.NOT_SENT + " = 1")
     fun getQuestionsUnsent(): Single<List<Question>>
 
     @Insert

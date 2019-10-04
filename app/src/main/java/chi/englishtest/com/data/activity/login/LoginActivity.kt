@@ -16,6 +16,13 @@ class LoginActivity : BaseActivity<LoginPresenter, LoginView>(), LoginView {
 
     override fun provideLayout(): Int = R.layout.activity_login
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+    }
+
     override fun buttonOnClickListener() {
         buttonSignIn.setOnClickListener { signIn() }
     }

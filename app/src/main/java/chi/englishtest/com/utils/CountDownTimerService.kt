@@ -90,6 +90,8 @@ class CountDownTimerService : Service() {
             builder?.setContentText("Time is running out. Responses will be sent if you have Internet, or when he will appear")
             builder?.setAutoCancel(true)
             notificationManager?.notify(1, builder?.build())
+            QuestionProvider.testIsDone = true
+            stopForeground(false)
             stopSelf()
         }
     }

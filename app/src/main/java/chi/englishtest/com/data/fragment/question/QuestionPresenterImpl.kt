@@ -22,39 +22,52 @@ class QuestionPresenterImpl(private val injection: Injection) :
     BasePresenterImpl<QuestionView>(injection), QuestionPresenter {
 
     override fun setAnswer(context: Context, question: QuestionWithAnswers, answerId: Int) {
-        //viewRef?.get()?.startLoadingDialog()
-        //Log.e("Retrofit", "$question: $answerId")
         question.question?.userChoice = answerId
         if (ServiceManager.isNetworkAvailable(context)) {
-            //TODO: sent question to server
-
             val questionID: RequestBody = RequestBody.create(MediaType.parse("text/plain"), question.question?.id.toString())
             val answerID: RequestBody = RequestBody.create(MediaType.parse("text/plain"), question.question?.userChoice.toString())
 
+            Log.i("Retrofit", "Network available, sending answer")
             restApi.setAnswer(questionID, answerID)
                 .subscribeOn(Schedulers.io())
                 .toObservable()
                 .flatMap {
                     if (it.isSuccessful) {
-                        setQuestionWithNoSentStatus(question, answerId, 0)
+                        Log.i("Retrofit", "Network Avaivable, Answer is sent, code: ${it.code()}")
+                        Observable.just(setQuestionWithNoSentStatus(question, answerId, 2))
                     } else {
-                        Log.e("Retrofit", "Answer is not sent, code: ${it.code()}")
-                        setQuestionWithNoSentStatus(question, answerId, 1)
+                        Log.e("Retrofit", "Network Avaivable, Answer is not sent, code: ${it.code()}")
+                        Observable.just(setQuestionWithNoSentStatus(question, answerId, 1))
                     }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(Consumer {}, getDefaultErrorConsumer())
-
+                .subscribe(Consumer {
+                }, getDefaultErrorConsumer())
         } else {
-            setQuestionWithNoSentStatus(question, answerId, 1)
+            Log.e("Retrofit", "Network isn't available, set Worker")
+            setQuestionWithNoSentStatusBlockingGet(question, answerId, 1)
             setAnswerWhenInternetAppear(context)
         }
-
         viewRef?.get()?.setNextQuestion()
     }
 
+    private fun setQuestionWithNoSentStatusBlockingGet(question: QuestionWithAnswers, answerId: Int, noSent: Int): Int {
+        return db.questionDao()
+            .updateQuestion(
+                Question(
+                    question.question?.id,
+                    question.question?.question,
+                    question.question?.testId,
+                    answerId,
+                    noSent
+                )
+            )
+            .subscribeOn(Schedulers.io())
+            .toObservable()
+            .blockingSingle()
+    }
 
-    private fun setQuestionWithNoSentStatus(question: QuestionWithAnswers, answerId: Int, noSent: Int ): Observable<Int> {
+    private fun setQuestionWithNoSentStatus(question: QuestionWithAnswers, answerId: Int, noSent: Int): Observable<Int> {
         return db.questionDao()
             .updateQuestion(
                 Question(
@@ -68,6 +81,7 @@ class QuestionPresenterImpl(private val injection: Injection) :
             .subscribeOn(Schedulers.io())
             .toObservable()
     }
+
 
     private fun setAnswerWhenInternetAppear(context: Context) {
         val constraints = Constraints.Builder()

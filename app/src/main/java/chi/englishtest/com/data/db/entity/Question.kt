@@ -15,6 +15,7 @@ class Question {
         this.id = id
         this.question = question
         this.testId = testId
+        this.notSent = 0
     }
 
     @Ignore

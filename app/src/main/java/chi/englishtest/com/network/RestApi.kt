@@ -31,5 +31,4 @@ interface RestApi {
     fun setAnswer(@Part("question_id") questionID: RequestBody,
                   @Part("answer_id") answerID: RequestBody)
             : Single<Response<ResultResponse>>
-
 }

@@ -17,6 +17,7 @@ import chi.englishtest.com.network.Injection
 import chi.englishtest.com.utils.CountDownTimerService
 import kotlinx.android.synthetic.main.activity_grammar.*
 import android.app.ActivityManager
+import chi.englishtest.com.utils.QuestionProvider
 import chi.englishtest.com.utils.ServiceManager
 
 
@@ -31,15 +32,26 @@ class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarVi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        setSupportActionBar(toolbarGrammar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+
         if(!ServiceManager.isMyServiceRunning(this, CountDownTimerService::class.java)) {
             Intent(this, CountDownTimerService::class.java).also {
                 startService(it)
             }
         }
 
-        setSupportActionBar(toolbarGrammar)
-
+        //TODO: When back-end will have added a version variable - check if there is a new version
         presenter.getTest(SharedManager.TEST_ID)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (QuestionProvider.testIsDone) {
+            QuestionProvider.testIsDone = false
+            onBackPressed()
+        }
     }
 
     private val messageReceiver: BroadcastReceiver = object: BroadcastReceiver() {

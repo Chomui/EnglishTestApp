@@ -27,7 +27,6 @@ class MainPresenterImpl(private var injection: Injection) : BasePresenterImpl<Ma
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe( Consumer {
                 viewRef?.get()?.stopLoadingDialog()
-                viewRef?.get()?.openGrammar()
             }, getDefaultErrorConsumer())
     }
 

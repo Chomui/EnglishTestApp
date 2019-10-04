@@ -8,6 +8,7 @@ import chi.englishtest.com.data.activity.BaseActivity
 import chi.englishtest.com.data.activity.grammar.GrammarActivity
 import chi.englishtest.com.data.sharedPref.SharedManager
 import chi.englishtest.com.network.Injection
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseActivity<MainPresenter, MainView>(), MainView {
 
@@ -17,14 +18,19 @@ class MainActivity : BaseActivity<MainPresenter, MainView>(), MainView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+
         presenter.testsIsEmpty()
     }
 
-    override fun openGrammar() {
-        Toast.makeText(this, SharedManager.accessToken, Toast.LENGTH_LONG).show()
-        startActivity(Intent(this, GrammarActivity::class.java))
+    override fun buttonOnClickListener() {
+        buttonGrammar.setOnClickListener { openGrammar() }
     }
 
-    override fun buttonOnClickListener() {
+    private fun openGrammar() {
+        Toast.makeText(this, SharedManager.accessToken, Toast.LENGTH_LONG).show()
+        startActivity(Intent(this, GrammarActivity::class.java))
     }
 }

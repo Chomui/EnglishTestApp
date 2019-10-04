@@ -12,27 +12,31 @@ class ServiceManager private constructor(){
 
     companion object {
         fun isNetworkAvailable(context: Context): Boolean {
-            val cm: ConnectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-
-            if (cm != null) {
-                if (Build.VERSION.SDK_INT < 23) {
-                    val ni: NetworkInfo = cm.activeNetworkInfo
-
-                    return ni != null && ni.isConnected
+            var result = false
+            val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                cm?.run {
+                    cm.getNetworkCapabilities(cm.activeNetwork)?.run {
+                        result = when {
+                            hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                            hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                            hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+                            else -> false
+                        }
+                    }
                 }
             } else {
-                val network: Network = cm.activeNetwork
-
-                if (network != null) {
-                    val nc: NetworkCapabilities = cm.getNetworkCapabilities(network)
-
-                    return (nc.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) || nc.hasTransport(
-                        NetworkCapabilities.TRANSPORT_WIFI
-                    ))
+                cm?.run {
+                    cm.activeNetworkInfo?.run {
+                        if (type == ConnectivityManager.TYPE_WIFI) {
+                            result = true
+                        } else if (type == ConnectivityManager.TYPE_MOBILE) {
+                            result = true
+                        }
+                    }
                 }
             }
-
-            return false
+            return result
         }
 
 
