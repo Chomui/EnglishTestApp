@@ -15,9 +15,18 @@ abstract class BaseAlertDialog : android.app.AlertDialog {
 
     protected constructor(context: Context) : super(context) {}
 
-    protected constructor(context: Context, cancelable: Boolean, cancelListener: DialogInterface.OnCancelListener): super(context, cancelable, cancelListener) {}
+    protected constructor(
+        context: Context,
+        cancelable: Boolean,
+        cancelListener: DialogInterface.OnCancelListener
+    ) : super(context, cancelable, cancelListener) {
+    }
 
-    protected constructor(context: Context, @StyleRes themeResId: Int): super(context, themeResId) {}
+    protected constructor(context: Context, @StyleRes themeResId: Int) : super(
+        context,
+        themeResId
+    ) {
+    }
 
     class Builder : AlertDialog.Builder {
 
@@ -40,7 +49,7 @@ abstract class BaseAlertDialog : android.app.AlertDialog {
         }
 
         override fun setMessage(message: CharSequence?): AlertDialog.Builder {
-            if(TextUtils.isEmpty(message)) {
+            if (TextUtils.isEmpty(message)) {
                 return super.setMessage("")
             }
             val string = SpannableString(message)
@@ -55,12 +64,18 @@ abstract class BaseAlertDialog : android.app.AlertDialog {
         override fun show(): AlertDialog {
             val alertDialog = create()
             alertDialog.setOnShowListener {
-                val color = ResourcesCompat.getColor(context.resources,
-                    if(buttonColor == -1) android.R.color.holo_purple else buttonColor,
-                    context.theme)
+                val color = ResourcesCompat.getColor(
+                    context.resources,
+                    if (buttonColor == -1) android.R.color.holo_purple else buttonColor,
+                    context.theme
+                )
                 var button: Button?
-                val buttons = intArrayOf(DialogInterface.BUTTON_NEGATIVE, DialogInterface.BUTTON_NEUTRAL, DialogInterface.BUTTON_POSITIVE)
-                for(buttonType in buttons) {
+                val buttons = intArrayOf(
+                    DialogInterface.BUTTON_NEGATIVE,
+                    DialogInterface.BUTTON_NEUTRAL,
+                    DialogInterface.BUTTON_POSITIVE
+                )
+                for (buttonType in buttons) {
                     button = alertDialog.getButton(buttonType)
                     button?.setTextColor(color)
                 }

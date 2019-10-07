@@ -50,7 +50,7 @@ abstract class BaseActivity<T : BasePresenter<V>, V : BaseView> : AppCompatActiv
 
     override fun startLoadingDialog() {
         runOnUiThread {
-            if(loadingDialog == null) {
+            if (loadingDialog == null) {
                 loadingDialog = LoadingDialog.start(supportFragmentManager)
             }
         }
@@ -58,7 +58,7 @@ abstract class BaseActivity<T : BasePresenter<V>, V : BaseView> : AppCompatActiv
 
     override fun stopLoadingDialog() {
         runOnUiThread {
-            if(loadingDialog != null && !isFinishing) {
+            if (loadingDialog != null && !isFinishing) {
                 loadingDialog!!.dismissAllowingStateLoss()
                 loadingDialog = null
             }
@@ -77,8 +77,8 @@ abstract class BaseActivity<T : BasePresenter<V>, V : BaseView> : AppCompatActiv
             }
             .setCancelable(false)
 
-        if(isNeedNegativeButton) {
-            builder.setNegativeButton("Cancel") { dialog, _->
+        if (isNeedNegativeButton) {
+            builder.setNegativeButton("Cancel") { dialog, _ ->
                 onAlertDialogNegativeClick(dialog)
             }
         }

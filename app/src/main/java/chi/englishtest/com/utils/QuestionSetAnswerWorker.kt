@@ -18,8 +18,8 @@ import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.util.*
 
-class QuestionSetAnswerWorker(appContext: Context, workerParams: WorkerParameters)
-    : Worker(appContext, workerParams) {
+class QuestionSetAnswerWorker(appContext: Context, workerParams: WorkerParameters) :
+    Worker(appContext, workerParams) {
 
     private val restApi: RestApi = (applicationContext as Injection).injectRestApi()
     private val db: AppDatabase = (applicationContext as Injection).injectDatabase()
@@ -31,22 +31,25 @@ class QuestionSetAnswerWorker(appContext: Context, workerParams: WorkerParameter
             .toObservable()
             .flatMapIterable { it }
             .flatMap { question ->
-                val questionID: RequestBody = RequestBody.create(MediaType.parse("text/plain"), question.id.toString())
-                val answerID: RequestBody = RequestBody.create(MediaType.parse("text/plain"), question.userChoice.toString())
+                val questionID: RequestBody =
+                    RequestBody.create(MediaType.parse("text/plain"), question.id.toString())
+                val answerID: RequestBody = RequestBody.create(
+                    MediaType.parse("text/plain"),
+                    question.userChoice.toString()
+                )
                 restApi.setAnswer(questionID, answerID)
                     .toObservable()
                     .flatMap {
                         if (it.isSuccessful) {
                             Log.i("Retrofit", "Worker: Answer sent successfully to the server")
-                            db.questionDao().
-                                updateQuestion(
-                                    Question(
-                                        question.id,question.question,
-                                        question.testId,
-                                        question.userChoice,
-                                        2
-                                    )
+                            db.questionDao().updateQuestion(
+                                Question(
+                                    question.id, question.question,
+                                    question.testId,
+                                    question.userChoice,
+                                    2
                                 )
+                            )
                                 .toObservable()
                                 .map { Result.success() }
                         } else {

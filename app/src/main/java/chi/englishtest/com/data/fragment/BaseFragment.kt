@@ -10,7 +10,7 @@ import chi.englishtest.com.R
 import chi.englishtest.com.data.activity.BaseActivity
 import chi.englishtest.com.data.activity.BaseAlertDialog
 
-abstract class BaseFragment<T: BasePresenter<V>, V: BaseView> : Fragment(), BaseView {
+abstract class BaseFragment<T : BasePresenter<V>, V : BaseView> : Fragment(), BaseView {
     val presenter: T by lazy { injectRepository() }
 
     abstract fun provideLayout(): Int
@@ -22,7 +22,11 @@ abstract class BaseFragment<T: BasePresenter<V>, V: BaseView> : Fragment(), Base
         presenter.bindView(this as V)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(provideLayout(), container, false)
     }
 
@@ -37,13 +41,13 @@ abstract class BaseFragment<T: BasePresenter<V>, V: BaseView> : Fragment(), Base
     }
 
     override fun startLoadingDialog() {
-        if(activity != null) {
+        if (activity != null) {
             (activity as BaseActivity<*, *>).startLoadingDialog()
         }
     }
 
     override fun stopLoadingDialog() {
-        if(activity != null) {
+        if (activity != null) {
             (activity as BaseActivity<*, *>).stopLoadingDialog()
         }
     }

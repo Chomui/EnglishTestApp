@@ -8,17 +8,18 @@ import chi.englishtest.com.network.Injection
 import chi.englishtest.com.network.ApiManager
 import chi.englishtest.com.network.RestApi
 import chi.englishtest.com.data.sharedPref.SharedManager
+import chi.englishtest.com.network.ApiManagerImpl
 import com.facebook.stetho.Stetho
 
 class App : Application(), Injection {
 
-    private var api: RestApi? = null
-    private var db: AppDatabase? = null
+    private lateinit var api: ApiManagerImpl
+    private lateinit var db: AppDatabase
 
     override fun onCreate() {
         super.onCreate()
 
-        api = ApiManager()
+        api = ApiManagerImpl(ApiManager())
 
         db = Room.databaseBuilder(this, AppDatabase::class.java, "database").build()
 
@@ -28,13 +29,11 @@ class App : Application(), Injection {
         Stetho.initializeWithDefaults(this)
     }
 
-    override fun injectRestApi(): RestApi {
-        return api!!
+    override fun injectRestApi(): ApiManagerImpl {
+        return api
     }
 
     override fun injectDatabase(): AppDatabase {
-        return db!!
+        return db
     }
-
-
 }

@@ -12,7 +12,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseActivity<MainPresenter, MainView>(), MainView {
 
-    override fun injectRepository(): MainPresenter = MainPresenterImpl(applicationContext as Injection)
+    override fun injectRepository(): MainPresenter =
+        MainPresenterImpl(applicationContext as Injection)
 
     override fun provideLayout(): Int = R.layout.activity_main
 
@@ -26,7 +27,7 @@ class MainActivity : BaseActivity<MainPresenter, MainView>(), MainView {
     }
 
     override fun buttonOnClickListener() {
-        buttonGrammar.setOnClickListener { presenter.updateDbForGrammarTest(this) }
+        buttonGrammar.setOnClickListener { presenter.updateDbForGrammarTest(this, SharedManager.TEST_ID) }
     }
 
     override fun openGrammar() {

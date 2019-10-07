@@ -2,10 +2,10 @@ package chi.englishtest.com.data.db
 
 import android.provider.BaseColumns
 
-class EnglishContract private constructor(){
+class EnglishContract private constructor() {
 
     class EnglishTest : BaseColumns {
-        companion object{
+        companion object {
             const val TABLE_NAME = "test"
             const val NAME = "name"
             const val DESCRIPTION = "description"

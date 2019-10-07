@@ -32,8 +32,10 @@ class QuestionAdapter(private val onQuestionClickGlobalListener: OnQuestionClick
         }
     }
 
-    class QuestionItemViewHolder(itemView: View, var onQuestionLocalListener: OnQuestionClickListener)
-        : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    class QuestionItemViewHolder(
+        itemView: View,
+        var onQuestionLocalListener: OnQuestionClickListener
+    ) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         var questionText: TextView = itemView.findViewById(R.id.textViewQuestion)
         var questionImage: ImageView = itemView.findViewById(R.id.imageViewQuestion)
 
@@ -46,8 +48,8 @@ class QuestionAdapter(private val onQuestionClickGlobalListener: OnQuestionClick
         }
 
         fun bindTo(data: QuestionWithAnswers) {
-            questionText.text = data.question?.question
-            if (data.question?.userChoice != null) {
+            questionText.text = data.question.question
+            if (data.question.userChoice != -1) {
                 questionImage.setImageResource(R.drawable.drawable_checkmark)
             } else {
                 questionImage.setImageResource(R.drawable.drawable_x)

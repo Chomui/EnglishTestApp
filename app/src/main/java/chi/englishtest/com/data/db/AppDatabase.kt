@@ -6,7 +6,11 @@ import chi.englishtest.com.data.db.entity.Answer
 import chi.englishtest.com.data.db.entity.Question
 import chi.englishtest.com.data.db.entity.Test
 
-@Database(entities = [Test::class, Question::class, Answer::class], version = 1, exportSchema = false)
+@Database(
+    entities = [Test::class, Question::class, Answer::class],
+    version = 1,
+    exportSchema = false
+)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun testDao(): TestDao
     abstract fun questionDao(): QuestionDao

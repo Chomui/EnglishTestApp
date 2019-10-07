@@ -24,11 +24,12 @@ import chi.englishtest.com.utils.ServiceManager
 
 class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarView {
 
-    override fun injectRepository(): GrammarPresenter = GrammarPresenterImpl(applicationContext as Injection)
+    override fun injectRepository(): GrammarPresenter =
+        GrammarPresenterImpl(applicationContext as Injection)
 
     override fun provideLayout(): Int = R.layout.activity_grammar
 
-    private var menu: Menu? = null
+    private lateinit var menu: Menu
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,11 +48,11 @@ class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarVi
         presenter.getTest(SharedManager.TEST_ID)
     }
 
-    private val messageReceiver: BroadcastReceiver = object: BroadcastReceiver() {
+    private val messageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(p0: Context?, p1: Intent?) {
-            if(p1 != null && p1.action.equals(SharedManager.COUNT_DOWN_TIMER_INFO)) {
+            if (p1 != null && p1.action.equals(SharedManager.COUNT_DOWN_TIMER_INFO)) {
                 if (p1.hasExtra("VALUE")) {
-                    menu?.findItem(R.id.countdown_timer)?.title = p1.getStringExtra("VALUE")
+                    menu.findItem(R.id.countdown_timer)?.title = p1.getStringExtra("VALUE")
                 }
                 if (p1.hasExtra("COMPLETED")) {
                     Toast.makeText(applicationContext, "Test completed", Toast.LENGTH_LONG).show()
@@ -63,7 +64,8 @@ class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarVi
 
     override fun onResume() {
         super.onResume()
-        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, IntentFilter(SharedManager.COUNT_DOWN_TIMER_INFO))
+        LocalBroadcastManager.getInstance(this)
+            .registerReceiver(messageReceiver, IntentFilter(SharedManager.COUNT_DOWN_TIMER_INFO))
     }
 
     override fun onPause() {
@@ -80,7 +82,9 @@ class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarVi
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar_grammar, menu)
-        this.menu = menu
+        if (menu != null) {
+            this.menu = menu
+        }
         return true
     }
 
@@ -97,6 +101,4 @@ class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarVi
     }
 
     override fun buttonOnClickListener() {}
-
-
 }

@@ -15,8 +15,8 @@ import java.net.UnknownHostException
 
 abstract class BasePresenterImpl<T : BaseView>(injection: Injection) :
     BasePresenter<T> {
-    var restApi: RestApi = injection.injectRestApi()
-    var db: AppDatabase = injection.injectDatabase()
+    var restApi = injection.injectRestApi()
+    var db = injection.injectDatabase()
     var viewRef: WeakReference<T>? = null
 
     override fun bindView(view: T) {

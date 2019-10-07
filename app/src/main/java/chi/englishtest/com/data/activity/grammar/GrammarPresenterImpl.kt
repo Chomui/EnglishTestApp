@@ -11,6 +11,8 @@ import chi.englishtest.com.model.net.question.QuestionResponse
 import chi.englishtest.com.network.Injection
 import chi.englishtest.com.utils.QuestionProvider
 import chi.englishtest.com.utils.answersToUiModel
+import chi.englishtest.com.utils.questionToEntityModels
+import chi.englishtest.com.utils.toQuestionWithAnswers
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Consumer
@@ -24,35 +26,30 @@ class GrammarPresenterImpl(private val injection: Injection) :
         var questions: List<QuestionResponse> = emptyList()
         viewRef?.get()?.startLoadingDialog()
         db.questionDao().getQuestionsWithAnswersByTestId(id)
-            .toObservable()
             .subscribeOn(Schedulers.io())
-            .flatMap { it ->
-                if (it.isEmpty()) {
-                    // loadQuestionsNetworkAndCache(id, questions)
-                    restApi.getQuestionsByTestId(id)
-                        .toObservable()
-                        .map {
-                            questions = it
-                            QuestionProvider.questions = it.map { question ->
-                                QuestionWithAnswers(Question(question.id!!, question.question!!, question.testId!!), question.answersToUiModel())
-                            }
-                            it.map { question -> Question(question.id!!, question.question!!, question.testId!!)}
-                        }
-                        .flatMap {
-                            db.questionDao().addAllQuestions(it).toObservable()
-                        }
-                        .flatMapIterable { questions }
-                        .flatMap {
-                            db.answerDao().addAllAnswer(it.answersToUiModel()).toObservable()
-                        }
-                } else {
+            .doOnNext {
+                if(it.isNotEmpty()) {
                     QuestionProvider.questions = it
-                    Observable.just(it)
                 }
             }
+            .filter { it.isEmpty() }
+            .flatMap { restApi.getQuestionsByTestId(id) }
+            .map {
+                questions = it
+                QuestionProvider.questions = it.toQuestionWithAnswers()
+                it.questionToEntityModels()
+            }
+            .flatMap {
+                db.questionDao().addAllQuestions(it).toObservable()
+            }
+            .flatMapIterable { questions }
+            .flatMap {
+                db.answerDao().addAllAnswer(it.answersToUiModel()).toObservable()
+            }
+            .toList()
             .map {
                 val list: MutableList<QuestionWithAnswers> = ArrayList()
-                for(i in 0..100) {
+                for (i in 0..100) {
                     list.addAll(QuestionProvider.questions)
                 }
                 QuestionProvider.questions = list

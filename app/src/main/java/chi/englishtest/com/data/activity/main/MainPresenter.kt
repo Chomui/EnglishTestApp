@@ -5,5 +5,5 @@ import chi.englishtest.com.data.activity.BasePresenter
 
 interface MainPresenter : BasePresenter<MainView> {
     fun testsIsEmpty()
-    fun updateDbForGrammarTest(context: Context)
+    fun updateDbForGrammarTest(context: Context, testID: Int)
 }

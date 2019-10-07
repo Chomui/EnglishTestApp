@@ -8,7 +8,7 @@ import android.net.NetworkCapabilities
 import android.net.NetworkInfo
 import android.os.Build
 
-class ServiceManager private constructor(){
+class ServiceManager private constructor() {
 
     companion object {
         fun isNetworkAvailable(context: Context): Boolean {

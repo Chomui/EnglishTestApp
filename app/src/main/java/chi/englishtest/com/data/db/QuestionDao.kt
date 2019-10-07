@@ -3,26 +3,35 @@ package chi.englishtest.com.data.db
 import androidx.room.*
 import chi.englishtest.com.data.db.entity.Question
 import io.reactivex.Completable
+import io.reactivex.Observable
 import io.reactivex.Single
 
 @Dao
 interface QuestionDao {
 
-    @Query("SELECT * FROM " + EnglishContract.EnglishQuestion.TABLE_NAME +
-            " WHERE " + EnglishContract.EnglishQuestion.TEST_ID + " = :testId")
-    fun getQuestionsByTestId(testId: Int): Single<List<Question>>
+    @Query(
+        "SELECT * FROM " + EnglishContract.EnglishQuestion.TABLE_NAME +
+                " WHERE " + EnglishContract.EnglishQuestion.TEST_ID + " = :testId"
+    )
+    fun getQuestionsByTestId(testId: Int): Observable<List<Question>>
 
-    @Query("SELECT * FROM " + EnglishContract.EnglishQuestion.TABLE_NAME +
-            " WHERE " + EnglishContract.EnglishQuestion.TEST_ID + " = :testId")
-    fun getQuestionsWithAnswersByTestId(testId: Int): Single<List<QuestionWithAnswers>>
+    @Query(
+        "SELECT * FROM " + EnglishContract.EnglishQuestion.TABLE_NAME +
+                " WHERE " + EnglishContract.EnglishQuestion.TEST_ID + " = :testId"
+    )
+    fun getQuestionsWithAnswersByTestId(testId: Int): Observable<List<QuestionWithAnswers>>
 
-    @Query("SELECT * FROM " + EnglishContract.EnglishQuestion.TABLE_NAME +
-            " WHERE " + EnglishContract.EnglishQuestion.NOT_SENT + " = 1")
-    fun getQuestionsUnsent(): Single<List<Question>>
+    @Query(
+        "SELECT * FROM " + EnglishContract.EnglishQuestion.TABLE_NAME +
+                " WHERE " + EnglishContract.EnglishQuestion.NOT_SENT + " = 1"
+    )
+    fun getQuestionsUnsent(): Observable<List<Question>>
 
-    @Query("UPDATE " + EnglishContract.EnglishQuestion.TABLE_NAME +
-            " SET " + EnglishContract.EnglishQuestion.USER_CHOICE + " = " +
-            " :userChoice WHERE " + EnglishContract.EnglishQuestion.TEST_ID  + " = :testId")
+    @Query(
+        "UPDATE " + EnglishContract.EnglishQuestion.TABLE_NAME +
+                " SET " + EnglishContract.EnglishQuestion.USER_CHOICE + " = " +
+                " :userChoice WHERE " + EnglishContract.EnglishQuestion.TEST_ID + " = :testId"
+    )
     fun updateUserChoiceByTestId(testId: Int, userChoice: Int?): Single<Int>
 
     @Insert

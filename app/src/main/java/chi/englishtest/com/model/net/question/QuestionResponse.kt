@@ -3,11 +3,11 @@ package chi.englishtest.com.model.net.question
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class QuestionResponse(
-    var id: Int? = null,
-    var question: String? = null,
+data class QuestionResponse(
+    var id: Int,
+    var question: String,
     @SerializedName("test_id")
-    var testId: Int? = null,
-    var number: Int? = null,
-    var answers: List<Answer>? = null
+    var testId: Int,
+    var number: Int,
+    var answers: List<Answer>
 )

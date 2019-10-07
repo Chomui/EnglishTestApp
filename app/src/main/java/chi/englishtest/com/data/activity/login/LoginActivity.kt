@@ -12,7 +12,8 @@ import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : BaseActivity<LoginPresenter, LoginView>(), LoginView {
 
-    override fun injectRepository(): LoginPresenter = LoginPresenterImpl(applicationContext as Injection)
+    override fun injectRepository(): LoginPresenter =
+        LoginPresenterImpl(applicationContext as Injection)
 
     override fun provideLayout(): Int = R.layout.activity_login
 

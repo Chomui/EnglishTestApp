@@ -22,64 +22,70 @@ class QuestionPresenterImpl(private val injection: Injection) :
     BasePresenterImpl<QuestionView>(injection), QuestionPresenter {
 
     override fun setAnswer(context: Context, question: QuestionWithAnswers, answerId: Int) {
-        question.question?.userChoice = answerId
+        question.question.userChoice = answerId
         if (ServiceManager.isNetworkAvailable(context)) {
-            val questionID: RequestBody = RequestBody.create(MediaType.parse("text/plain"), question.question?.id.toString())
-            val answerID: RequestBody = RequestBody.create(MediaType.parse("text/plain"), question.question?.userChoice.toString())
-
             Log.i("Retrofit", "Network available, sending answer")
-            setQuestionWithNoSentStatus(question, answerId, 0)
-                .flatMap { restApi.setAnswer(questionID, answerID)
-                    .toObservable()
-                    .flatMap {
-                        if (it.isSuccessful) {
-                            Log.i("Retrofit", "Network Available, Answer is sent, code: ${it.code()}")
-                            setQuestionWithNoSentStatus(question, answerId, 2)
-                        } else {
-                            Log.e("Retrofit", "Network Available, Answer is not sent, code: ${it.code()}")
-                            setQuestionWithNoSentStatus(question, answerId, 1)
-                        }
-                    }
+            db.questionDao()
+                .updateQuestion(
+                    Question(
+                        question.question?.id,
+                        question.question?.question,
+                        question.question?.testId,
+                        answerId,
+                        0
+                    )
+                )
+                .subscribeOn(Schedulers.io())
+                .doOnSuccess {
+                    viewRef?.get()?.setNextQuestion()
+                }
+                .toObservable()
+                .flatMap { restApi.setAnswer(question.question.id, answerId).toObservable() }
+                .filter { !it.isSuccessful }
+                .doOnNext{
+                    Log.e("Retrofit", "Network Available, Answer is not sent, code: ${it.code()}")
+                }
+                .flatMap {
+                    db.questionDao().updateQuestion(
+                            Question(
+                                question.question.id,
+                                question.question.question,
+                                question.question.testId,
+                                answerId,
+                                1
+                            )
+                        )
+                        .toObservable()
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(Consumer{}, getDefaultErrorConsumer())
+                .subscribe(Consumer {}, getDefaultErrorConsumer())
         } else {
             Log.e("Retrofit", "Network isn't available, set Worker")
             setQuestionWithNoSentStatus(question, answerId, 1)
             setAnswerWhenInternetAppear(context)
         }
-        viewRef?.get()?.setNextQuestion()
     }
 
-    private fun setQuestionWithNoSentStatusBlockingGet(question: QuestionWithAnswers, answerId: Int, noSent: Int): Int {
-        return db.questionDao()
-            .updateQuestion(
-                Question(
-                    question.question?.id,
-                    question.question?.question,
-                    question.question?.testId,
-                    answerId,
-                    noSent
-                )
-            )
-            .subscribeOn(Schedulers.io())
-            .toObservable()
-            .blockingSingle()
-    }
 
-    private fun setQuestionWithNoSentStatus(question: QuestionWithAnswers, answerId: Int, noSent: Int): Observable<Int> {
-        return db.questionDao()
-            .updateQuestion(
-                Question(
-                    question.question?.id,
-                    question.question?.question,
-                    question.question?.testId,
-                    answerId,
-                    noSent
-                )
+    private fun setQuestionWithNoSentStatus(
+        question: QuestionWithAnswers,
+        answerId: Int,
+        noSent: Int
+    ) {
+        db.questionDao().updateQuestion(
+            Question(
+                question.question.id,
+                question.question.question,
+                question.question.testId,
+                answerId,
+                1
             )
+        )
             .subscribeOn(Schedulers.io())
             .toObservable()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
+
     }
 
 

@@ -18,11 +18,13 @@ import chi.englishtest.com.utils.QuestionProvider
 import kotlinx.android.synthetic.main.fragment_all_questions.*
 
 class AllQuestionsFragment
-    : BaseFragment<AllQuestionsPresenter, AllQuestionsView>(), AllQuestionsView, QuestionAdapter.OnQuestionClickListener {
+    : BaseFragment<AllQuestionsPresenter, AllQuestionsView>(), AllQuestionsView,
+    QuestionAdapter.OnQuestionClickListener {
 
     override fun provideLayout(): Int = R.layout.fragment_all_questions
 
-    override fun injectRepository(): AllQuestionsPresenter = AllQuestionsPresenterImpl(activity?.applicationContext as Injection)
+    override fun injectRepository(): AllQuestionsPresenter =
+        AllQuestionsPresenterImpl(activity?.applicationContext as Injection)
 
     private val adapter = QuestionAdapter(this)
 

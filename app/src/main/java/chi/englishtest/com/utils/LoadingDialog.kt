@@ -12,15 +12,19 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import chi.englishtest.com.R
 
-class LoadingDialog private constructor(): DialogFragment() {
+class LoadingDialog private constructor() : DialogFragment() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.dialog_loading, container, false)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
-        if(dialog.window != null) {
+        if (dialog.window != null) {
             dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)

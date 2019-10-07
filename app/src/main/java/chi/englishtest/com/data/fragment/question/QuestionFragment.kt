@@ -24,36 +24,27 @@ class QuestionFragment : BaseFragment<QuestionPresenter, QuestionView>(), Questi
 
     override fun provideLayout(): Int = R.layout.fragment_question
 
-    override fun injectRepository(): QuestionPresenter = QuestionPresenterImpl(activity?.applicationContext as Injection)
+    override fun injectRepository(): QuestionPresenter =
+        QuestionPresenterImpl(activity?.applicationContext as Injection)
 
     private var isDataSetting: Boolean = false
 
-    private var radioGroupQuestion: RadioGroup? = null
-    private var textViewQuestion: TextView? = null
-    private var radioButtonFirst: RadioButton? = null
-    private var radioButtonSecond: RadioButton? = null
-    private var radioButtonThird: RadioButton? = null
-    private var radioButtonFourth: RadioButton? = null
+    private lateinit var radioGroupQuestion: RadioGroup
+    private lateinit var textViewQuestion: TextView
+    private lateinit var radioButtonFirst: RadioButton
+    private lateinit var radioButtonSecond: RadioButton
+    private lateinit var radioButtonThird: RadioButton
+    private lateinit var radioButtonFourth: RadioButton
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view =  super.onCreateView(inflater, container, savedInstanceState)
-
-        radioGroupQuestion = view?.findViewById(R.id.radioGroupQuestion)
-        textViewQuestion = view?.findViewById(R.id.textViewQuestion)
-        radioButtonFirst = view?.findViewById(R.id.radioButtonFirst)
-        radioButtonSecond = view?.findViewById(R.id.radioButtonSecond)
-        radioButtonThird = view?.findViewById(R.id.radioButtonThird)
-        radioButtonFourth = view?.findViewById(R.id.radioButtonFourth)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         setQuestionToUi()
-
-        return view
     }
 
     override fun setNextQuestion() {
         if (QuestionProvider.currentIndexPosition < QuestionProvider.questions.size.minus(1)) {
             QuestionProvider.currentIndexPosition++
-            //setQuestionToUi()
             (activity as GrammarActivity).openQuestionFragment()
         } else {
             Toast.makeText(view?.context, "Вопросы закончились", Toast.LENGTH_SHORT).show()
@@ -61,26 +52,42 @@ class QuestionFragment : BaseFragment<QuestionPresenter, QuestionView>(), Questi
     }
 
     override fun buttonOnClickListener() {
-        radioGroupQuestion?.setOnCheckedChangeListener(onCheckedChangeListener())
+        radioGroupQuestion.setOnCheckedChangeListener(onCheckedChangeListener())
     }
 
     private fun onCheckedChangeListener() =
         RadioGroup.OnCheckedChangeListener { p0, p1 ->
-            if(!isDataSetting) {
+            if (!isDataSetting) {
                 val currentQuestion =
                     QuestionProvider.questions[QuestionProvider.currentIndexPosition]
                 when (p1) {
                     R.id.radioButtonFirst -> {
-                        presenter.setAnswer(activity!!.applicationContext, currentQuestion, currentQuestion.answers!!.first().id)
+                        presenter.setAnswer(
+                            activity?.applicationContext!!,
+                            currentQuestion,
+                            currentQuestion.answers.first().id
+                        )
                     }
                     R.id.radioButtonSecond -> {
-                        presenter.setAnswer(activity!!.applicationContext, currentQuestion, currentQuestion.answers!![1].id)
+                        presenter.setAnswer(
+                            activity?.applicationContext!!,
+                            currentQuestion,
+                            currentQuestion.answers[1].id
+                        )
                     }
                     R.id.radioButtonThird -> {
-                        presenter.setAnswer(activity!!.applicationContext, currentQuestion, currentQuestion.answers!![2].id)
+                        presenter.setAnswer(
+                            activity?.applicationContext!!,
+                            currentQuestion,
+                            currentQuestion.answers[2].id
+                        )
                     }
                     R.id.radioButtonFourth -> {
-                        presenter.setAnswer(activity!!.applicationContext, currentQuestion, currentQuestion.answers!![3].id)
+                        presenter.setAnswer(
+                            activity?.applicationContext!!,
+                            currentQuestion,
+                            currentQuestion.answers[3].id
+                        )
                     }
                 }
             }
@@ -90,24 +97,22 @@ class QuestionFragment : BaseFragment<QuestionPresenter, QuestionView>(), Questi
 
         val currentQuestion = QuestionProvider.questions[QuestionProvider.currentIndexPosition]
         val answers = currentQuestion.answers
-        textViewQuestion?.text = currentQuestion.question?.question
-        radioButtonFirst?.text = answers?.first()?.answer
-        radioButtonSecond?.text = answers?.get(1)?.answer
-        radioButtonThird?.text = answers?.get(2)?.answer
-        radioButtonFourth?.text = answers?.get(3)?.answer
+        textViewQuestion.text = currentQuestion.question.question
+        radioButtonFirst.text = answers.first().answer
+        radioButtonSecond.text = answers[1].answer
+        radioButtonThird.text = answers[2].answer
+        radioButtonFourth.text = answers[3].answer
 
-        val userChoice = currentQuestion.question?.userChoice
+        val userChoice = currentQuestion.question.userChoice
         isDataSetting = true
-        if (userChoice != null) {
-            when (userChoice) {
-                answers?.first()?.id -> radioButtonFirst?.isChecked = true
+        when (userChoice) {
+            answers.first().id -> radioButtonFirst.isChecked = true
 
-                answers?.get(1)?.id -> radioButtonSecond?.isChecked = true
+            answers[1].id -> radioButtonSecond.isChecked = true
 
-                answers?.get(2)?.id -> radioButtonThird?.isChecked = true
+            answers[2].id -> radioButtonThird.isChecked = true
 
-                answers?.get(3)?.id -> radioButtonFourth?.isChecked = true
-            }
+            answers[3].id -> radioButtonFourth.isChecked = true
         }
         isDataSetting = false
     }

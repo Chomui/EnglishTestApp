@@ -6,5 +6,5 @@ import chi.englishtest.com.data.db.entity.Question
 import chi.englishtest.com.data.fragment.BasePresenter
 
 interface QuestionPresenter : BasePresenter<QuestionView> {
-    fun setAnswer(context: Context , question: QuestionWithAnswers , answerId: Int)
+    fun setAnswer(context: Context, question: QuestionWithAnswers, answerId: Int)
 }
