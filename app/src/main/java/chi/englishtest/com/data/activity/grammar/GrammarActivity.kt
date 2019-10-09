@@ -22,6 +22,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.NotificationCompat
 import chi.englishtest.com.utils.QuestionProvider
 import chi.englishtest.com.utils.ServiceManager
@@ -78,6 +79,10 @@ class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarVi
     override fun onPause() {
         super.onPause()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver)
+    }
+
+    override fun onBackPressed() {
+        showDialogOnBackPressed(this)
     }
 
     override fun openQuestionFragment() {
@@ -146,5 +151,22 @@ class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarVi
         notificationManager.notify(1, builder.build())
     }
 
+    private fun showDialogOnBackPressed(context: Context) {
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+        with(builder) {
+            setMessage("You can use home button. If you want just get back - test will be canceled. Are you sure?")
+            setTitle("Cancel test")
+            setPositiveButton("Yes") { _, _ ->
+                Intent(context, CountDownTimerService::class.java).also {
+                    stopService(it)
+                }
+                pushNotification("Test is canceled")
+                finish()
+            }
+            setNegativeButton("No") {_, _ -> }
+        }
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
 
 }

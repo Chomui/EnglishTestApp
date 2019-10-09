@@ -61,8 +61,8 @@ class CountDownTimerService : Service() {
 
     override fun onDestroy() {
         timer.cancel()
+        QuestionProvider.testIsDone = false
         super.onDestroy()
-        sendTimeInfoBroadcast(SharedManager.VALUE, "Stopped")
     }
 
     inner class Counter(private val milliesInFuture: Long, private val countDownInterval: Long) :
