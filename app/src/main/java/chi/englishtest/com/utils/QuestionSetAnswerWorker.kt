@@ -11,86 +11,89 @@ import chi.englishtest.com.network.Injection
 import chi.englishtest.com.network.NetManager
 import chi.englishtest.com.network.RestApi
 import io.reactivex.Observable
+import io.reactivex.functions.Consumer
 import okhttp3.MediaType
 import okhttp3.RequestBody
+import org.reactivestreams.Subscriber
+import org.reactivestreams.Subscription
 import retrofit2.HttpException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.util.*
+import kotlin.collections.ArrayList
 
 class QuestionSetAnswerWorker(appContext: Context, workerParams: WorkerParameters) :
     Worker(appContext, workerParams) {
 
-    private val restApi: RestApi = (applicationContext as Injection).injectRestApi()
-    private val db: AppDatabase = (applicationContext as Injection).injectDatabase()
+    private val restApi = (applicationContext as Injection).injectRestApi()
+    private val db = (applicationContext as Injection).injectDatabase()
 
     override fun doWork(): Result {
         Log.i("Retrofit", "In worker")
-        val results = db.questionDao()
+        lateinit var questionTemp: Question
+        val results = ArrayList<Result>()
+        db.questionDao()
             .getQuestionsUnsent()
             .toObservable()
             .flatMapIterable { it }
             .flatMap { question ->
-                val questionID: RequestBody =
-                    RequestBody.create(MediaType.parse("text/plain"), question.id.toString())
-                val answerID: RequestBody = RequestBody.create(
-                    MediaType.parse("text/plain"),
-                    question.userChoice.toString()
-                )
-                restApi.setAnswer(questionID, answerID)
-                    .toObservable()
-                    .flatMap {
-                        if (it.isSuccessful) {
-                            Log.i("Retrofit", "Worker: Answer sent successfully to the server")
-                            db.questionDao().updateQuestion(
-                                Question(
-                                    question.id, question.question,
-                                    question.testId,
-                                    question.userChoice,
-                                    2
-                                )
-                            )
-                                .toObservable()
-                                .map { Result.success() }
-                        } else {
-                            Log.i("Retrofit", "Worker: Answer not sent to the server")
-                            if (it.code() != null) {
-                                when (it.code()) {
-                                    408,
-                                    429,
-                                    in 501..599 -> {
-                                        Log.e("Retrofit", "Worker: retry, code ${it.code()}")
-                                        Observable.just(Result.retry())
-                                    }
-                                    else -> {
-                                        Log.e("Retrofit", "Worker: failure, code ${it.code()}")
-                                        Observable.just(Result.failure())
-                                    }
-                                }
-                            } else {
-                                Log.e("Retrofit", "Worker: failure, without code")
-                                Observable.just(Result.failure())
-                            }
-                        }
-                    }
+                questionTemp = question
+                restApi.setAnswer(question.id, question.userChoice!!).toObservable()
             }
             .doOnError {
-                Log.e("Retrofit", "Worker error")
+                Log.e("Retrofit", "Worker exception: ${it.message}")
                 it.printStackTrace()
+                results.add(Result.failure())
+            }
+            .doOnNext {
+                if (!it.isSuccessful) {
+                    results.add(handleNetCode(it.code()))
+                } else {
+                    results.add(Result.success())
+                }
+            }
+            .filter { it.isSuccessful }
+            .flatMap {
+                Log.i("Retrofit", "Worker: Answer sent successfully to the server")
+                updateDbForSussessfullySendQuestion(questionTemp)
             }
             .toList()
             .blockingGet()
 
-        if (results.isNotEmpty()) {
-            for (result in results) {
-                if (result != Result.success()) {
-                    return result
-                }
-            }
-        } else {
-            Log.i("Retrofit", "results is empty")
+        if (results.contains(Result.retry())) {
+            return Result.retry()
+        } else if(results.contains(Result.failure())) {
+            return Result.failure()
         }
 
         return Result.success()
+    }
+
+    private fun updateDbForSussessfullySendQuestion(questionTemp: Question): Observable<Int>? {
+        return db.questionDao().updateQuestion(
+            Question(
+                questionTemp.id,
+                questionTemp.question,
+                questionTemp.testId,
+                questionTemp.userChoice,
+                2
+            )
+        )
+            .toObservable()
+    }
+
+    private fun handleNetCode(code: Int): Result {
+        return when (code) {
+            408,
+            429,
+            in 501..599 -> {
+                Log.e("Retrofit", "Worker: retry, code $code")
+                Result.retry()
+            }
+            else -> {
+                Log.e("Retrofit", "Worker: failure, code $code")
+                Result.failure()
+            }
+        }
     }
 }

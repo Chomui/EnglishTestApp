@@ -20,10 +20,10 @@ fun QuestionResponse.answersToUiModel(): List<Answer> {
 
 fun LogInResponse.cacheUserData(email: String, pass: String) {
     SharedManager.isUserAuthorized = true
-    SharedManager.accessToken = this.authenticationTokens.token
+    SharedManager.accessToken = this.authenticationTokens.first().token
     SharedManager.userEmail = email
     SharedManager.userPassword = pass
-    SharedManager.userId = this.authenticationTokens.userId
+    SharedManager.userId = this.authenticationTokens.first().userId
     SharedManager.isTeacher = this.isTeacher
 }
 
@@ -44,8 +44,8 @@ fun List<QuestionResponse>.toQuestionWithAnswers(): List<QuestionWithAnswers> {
                     question.id,
                     question.question,
                     question.testId,
-                    null,
-                    null
+                    -1,
+                    0
                 ), question.answersToUiModel()
             )
         )
@@ -61,7 +61,7 @@ fun List<QuestionResponse>.questionToEntityModels(): List<Question> {
                 question.id,
                 question.question,
                 question.testId,
-                null,
+                -1,
                 0
             )
         )

@@ -12,35 +12,44 @@ class MainPresenterImpl(private var injection: Injection) : BasePresenterImpl<Ma
     MainPresenter {
 
     override fun testsIsEmpty() {
-        viewRef?.get()?.startLoadingDialog()
-        db.testDao()
-            .getAllTests()
-            .subscribeOn(Schedulers.io())
-            .filter { it.isEmpty() }
-            .flatMap { restApi.getTests()}
-            .map { it.testsToEntityModels() }
-            .flatMap { db.testDao().addAllTests(it).toObservable() }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(Consumer {
-                viewRef?.get()?.stopLoadingDialog()
-            }, getDefaultErrorConsumer())
+        viewRef?.startLoadingDialog()
+        compositeDisposable.add(
+            db.testDao()
+                .getAllTests()
+                .subscribeOn(Schedulers.io())
+                .toObservable()
+                .doOnNext {
+                    if (it.isNotEmpty()) {
+                        viewRef?.stopLoadingDialog()
+                    }
+                }
+                .filter { it.isEmpty() }
+                .flatMap { restApi.getTests() }
+                .map { it.testsToEntityModels() }
+                .flatMap { db.testDao().addAllTests(it).toObservable() }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(Consumer {
+                    viewRef?.stopLoadingDialog()
+                }, getDefaultErrorConsumer())
+        )
     }
 
     override fun updateDbForGrammarTest(context: Context, testID: Int) {
-        viewRef?.get()?.startLoadingDialog()
+        viewRef?.startLoadingDialog()
         if (ServiceManager.isMyServiceRunning(context, CountDownTimerService::class.java)) {
-            viewRef?.get()?.stopLoadingDialog()
-            viewRef?.get()?.openGrammar()
+            viewRef?.stopLoadingDialog()
+            viewRef?.openGrammar()
         } else {
-            db.questionDao()
-                .updateUserChoiceByTestId(testID, null)
-                .subscribeOn(Schedulers.io())
-                .toObservable()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    viewRef?.get()?.stopLoadingDialog()
-                    viewRef?.get()?.openGrammar()
-                }
+            compositeDisposable.add(
+                db.questionDao()
+                    .updateUserChoiceByTestId(testID, null)
+                    .subscribeOn(Schedulers.io())
+                    .toObservable()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe {
+                        viewRef?.stopLoadingDialog()
+                        viewRef?.openGrammar()
+                    })
         }
     }
 }

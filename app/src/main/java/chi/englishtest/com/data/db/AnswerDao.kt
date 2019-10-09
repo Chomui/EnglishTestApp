@@ -17,20 +17,17 @@ interface AnswerDao {
         "SELECT * FROM " + EnglishContract.EnglishAnswer.TABLE_NAME +
                 " WHERE " + EnglishContract.EnglishAnswer.QUESTION_ID + " = :questionId"
     )
-    fun getAnswersByQuestionId(questionId: Int): Observable<List<Answer>>
+    fun getAnswersByQuestionId(questionId: Int): Single<List<Answer>>
 
     @Insert
     fun addAnswer(answer: Answer): Single<Long>
 
     @Insert
-    fun addAllAnswer(vararg answers: Answer): Single<List<Long>>
-
-    @Insert
     fun addAllAnswer(answers: List<Answer>): Single<List<Long>>
 
     @Delete
-    fun removeAnswer(answer: Answer): Completable
+    fun removeAnswer(answer: Answer): Single<Int>
 
     @Delete
-    fun removeAllAnswers(answers: List<Answer>): Completable
+    fun removeAllAnswers(answers: List<Answer>): Single<Int>
 }

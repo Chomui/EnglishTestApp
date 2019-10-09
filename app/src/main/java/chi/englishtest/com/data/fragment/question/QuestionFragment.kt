@@ -1,24 +1,15 @@
 package chi.englishtest.com.data.fragment.question
 
-import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.view.animation.AnimationUtils
-import android.widget.RadioButton
 import android.widget.RadioGroup
-import android.widget.TextView
 import android.widget.Toast
 import chi.englishtest.com.R
 import chi.englishtest.com.data.activity.grammar.GrammarActivity
-import chi.englishtest.com.data.db.entity.Answer
-import chi.englishtest.com.data.db.entity.Question
 import chi.englishtest.com.data.fragment.BaseFragment
-import chi.englishtest.com.data.fragment.allquestions.AllQuestionsFragment
-import chi.englishtest.com.data.sharedPref.SharedManager
 import chi.englishtest.com.network.Injection
 import chi.englishtest.com.utils.QuestionProvider
+import kotlinx.android.synthetic.main.fragment_question.*
 
 class QuestionFragment : BaseFragment<QuestionPresenter, QuestionView>(), QuestionView {
 
@@ -28,13 +19,6 @@ class QuestionFragment : BaseFragment<QuestionPresenter, QuestionView>(), Questi
         QuestionPresenterImpl(activity?.applicationContext as Injection)
 
     private var isDataSetting: Boolean = false
-
-    private lateinit var radioGroupQuestion: RadioGroup
-    private lateinit var textViewQuestion: TextView
-    private lateinit var radioButtonFirst: RadioButton
-    private lateinit var radioButtonSecond: RadioButton
-    private lateinit var radioButtonThird: RadioButton
-    private lateinit var radioButtonFourth: RadioButton
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

@@ -17,7 +17,12 @@ import chi.englishtest.com.network.Injection
 import chi.englishtest.com.utils.CountDownTimerService
 import kotlinx.android.synthetic.main.activity_grammar.*
 import android.app.ActivityManager
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.util.Log
 import android.widget.Toast
+import androidx.core.app.NotificationCompat
 import chi.englishtest.com.utils.QuestionProvider
 import chi.englishtest.com.utils.ServiceManager
 
@@ -29,7 +34,7 @@ class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarVi
 
     override fun provideLayout(): Int = R.layout.activity_grammar
 
-    private lateinit var menu: Menu
+    private var menu: Menu? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,19 +56,21 @@ class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarVi
     private val messageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(p0: Context?, p1: Intent?) {
             if (p1 != null && p1.action.equals(SharedManager.COUNT_DOWN_TIMER_INFO)) {
-                if (p1.hasExtra("VALUE")) {
-                    menu.findItem(R.id.countdown_timer)?.title = p1.getStringExtra("VALUE")
+                if (p1.hasExtra(SharedManager.VALUE)) {
+                    menu?.findItem(R.id.countdown_timer)?.title = p1.getStringExtra(SharedManager.VALUE)
                 }
-                if (p1.hasExtra("COMPLETED")) {
+                if (p1.hasExtra(SharedManager.COMPLETED )) {
                     Toast.makeText(applicationContext, "Test completed", Toast.LENGTH_LONG).show()
-                    onBackPressed()
+                    pushNotification("Test completed. If there was no internet, answers will sent after connection is back")
+                    checkTestIsDone()
                 }
             }
         }
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        checkTestIsDone()
+        super.onStart()
         LocalBroadcastManager.getInstance(this)
             .registerReceiver(messageReceiver, IntentFilter(SharedManager.COUNT_DOWN_TIMER_INFO))
     }
@@ -74,6 +81,7 @@ class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarVi
     }
 
     override fun openQuestionFragment() {
+        Log.i("Retrofit", "Change fragment, context ${javaClass}")
         supportFragmentManager.beginTransaction()
             .setCustomAnimations(R.animator.slide_in_left, R.animator.slide_in_right)
             .replace(R.id.fragmentPlace, QuestionFragment())
@@ -101,4 +109,42 @@ class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarVi
     }
 
     override fun buttonOnClickListener() {}
+
+    private fun checkTestIsDone() {
+        if (QuestionProvider.testIsDone) {
+            QuestionProvider.testIsDone = false
+            finish()
+        }
+    }
+
+    private fun pushNotification(message: String) {
+        val pendingIntent =
+            Intent(this, GrammarActivity::class.java).let { notificationIntent ->
+                PendingIntent.getActivity(this, 0, notificationIntent, 0)
+            }
+
+        val notificationManager =
+            this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        val builder = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            val importance: Int = NotificationManager.IMPORTANCE_DEFAULT
+            val notificationChannel =
+                NotificationChannel("timer", "CountDownTimer", importance)
+            notificationManager.createNotificationChannel(notificationChannel)
+            NotificationCompat.Builder(applicationContext, notificationChannel.id)
+        } else {
+            NotificationCompat.Builder(applicationContext)
+        }
+
+        with(builder) {
+            setSmallIcon(R.mipmap.ic_launcher)
+            setContentTitle("Grammar Test")
+            setContentText(message)
+            setContentIntent(pendingIntent)
+        }
+
+        notificationManager.notify(1, builder.build())
+    }
+
+
 }

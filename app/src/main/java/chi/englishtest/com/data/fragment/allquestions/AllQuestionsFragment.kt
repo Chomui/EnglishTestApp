@@ -17,16 +17,15 @@ import chi.englishtest.com.network.Injection
 import chi.englishtest.com.utils.QuestionProvider
 import kotlinx.android.synthetic.main.fragment_all_questions.*
 
-class AllQuestionsFragment
-    : BaseFragment<AllQuestionsPresenter, AllQuestionsView>(), AllQuestionsView,
-    QuestionAdapter.OnQuestionClickListener {
-
-    override fun provideLayout(): Int = R.layout.fragment_all_questions
-
-    override fun injectRepository(): AllQuestionsPresenter =
-        AllQuestionsPresenterImpl(activity?.applicationContext as Injection)
+class AllQuestionsFragment : Fragment(), QuestionAdapter.OnQuestionClickListener {
 
     private val adapter = QuestionAdapter(this)
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_all_questions, container, false)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -41,6 +40,4 @@ class AllQuestionsFragment
         QuestionProvider.currentIndexPosition = id
         (activity as GrammarActivity).openQuestionFragment()
     }
-
-    override fun buttonOnClickListener() {}
 }

@@ -1,5 +1,6 @@
 package chi.englishtest.com.data.activity.splash
 
+import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -16,8 +17,13 @@ import chi.englishtest.com.data.sharedPref.SharedManager
 import chi.englishtest.com.network.Injection
 import chi.englishtest.com.utils.CountDownTimerService
 import chi.englishtest.com.utils.ServiceManager
+import android.Manifest.permission
+import android.Manifest.permission.READ_SMS
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
 
 class SplashActivity : AppCompatActivity() {
+
+    private val REQUEST_CODE = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

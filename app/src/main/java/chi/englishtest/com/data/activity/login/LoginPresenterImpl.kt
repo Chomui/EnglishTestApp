@@ -11,14 +11,15 @@ class LoginPresenterImpl(private var injection: Injection) :
     BasePresenterImpl<LoginView>(injection), LoginPresenter {
 
     override fun signIn(email: String, pass: String) {
-        viewRef?.get()?.startLoadingDialog()
-        restApi.signIn(email, pass)
+        viewRef?.startLoadingDialog()
+        compositeDisposable.add(
+            restApi.signIn(email, pass)
             .subscribeOn(Schedulers.io())
             .map { it.cacheUserData(email, pass) }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(Consumer {
-                viewRef?.get()?.stopLoadingDialog()
-                viewRef?.get()?.login()
-            }, getDefaultErrorConsumer())
+                viewRef?.stopLoadingDialog()
+                viewRef?.login()
+            }, getDefaultErrorConsumer()))
     }
 }

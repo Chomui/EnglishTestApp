@@ -9,7 +9,7 @@ class Question(
     var question: String,
     @ColumnInfo(name = EnglishContract.EnglishQuestion.TEST_ID) var testId: Int,
     @ColumnInfo(name = EnglishContract.EnglishQuestion.USER_CHOICE) var userChoice: Int?,
-    @ColumnInfo(name = EnglishContract.EnglishQuestion.NOT_SENT) var notSent: Int?
+    @ColumnInfo(name = EnglishContract.EnglishQuestion.NOT_SENT) var notSent: Int
 ) {
 
     override fun equals(other: Any?): Boolean {

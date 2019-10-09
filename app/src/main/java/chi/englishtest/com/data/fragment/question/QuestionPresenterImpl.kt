@@ -25,28 +25,29 @@ class QuestionPresenterImpl(private val injection: Injection) :
         question.question.userChoice = answerId
         if (ServiceManager.isNetworkAvailable(context)) {
             Log.i("Retrofit", "Network available, sending answer")
-            db.questionDao()
-                .updateQuestion(
-                    Question(
-                        question.question?.id,
-                        question.question?.question,
-                        question.question?.testId,
-                        answerId,
-                        0
+            compositeDisposable.add(
+                db.questionDao()
+                    .updateQuestion(
+                        Question(
+                            question.question.id,
+                            question.question.question,
+                            question.question.testId,
+                            answerId,
+                            0
+                        )
                     )
-                )
-                .subscribeOn(Schedulers.io())
-                .doOnSuccess {
-                    viewRef?.get()?.setNextQuestion()
-                }
-                .toObservable()
-                .flatMap { restApi.setAnswer(question.question.id, answerId).toObservable() }
-                .filter { !it.isSuccessful }
-                .doOnNext{
-                    Log.e("Retrofit", "Network Available, Answer is not sent, code: ${it.code()}")
-                }
-                .flatMap {
-                    db.questionDao().updateQuestion(
+                    .subscribeOn(Schedulers.io())
+                    .toObservable()
+                    .flatMap { restApi.setAnswer(question.question.id, answerId).toObservable() }
+                    .filter { !it.isSuccessful }
+                    .doOnNext {
+                        Log.e(
+                            "Retrofit",
+                            "Network Available, Answer is not sent, code: ${it.code()}"
+                        )
+                    }
+                    .flatMap {
+                        db.questionDao().updateQuestion(
                             Question(
                                 question.question.id,
                                 question.question.question,
@@ -55,15 +56,20 @@ class QuestionPresenterImpl(private val injection: Injection) :
                                 1
                             )
                         )
-                        .toObservable()
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(Consumer {}, getDefaultErrorConsumer())
+                            .toObservable()
+                    }
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                        Consumer {
+                        }, getDefaultErrorConsumer()
+                    )
+            )
         } else {
             Log.e("Retrofit", "Network isn't available, set Worker")
             setQuestionWithNoSentStatus(question, answerId, 1)
             setAnswerWhenInternetAppear(context)
         }
+        viewRef?.setNextQuestion()
     }
 
 
@@ -72,22 +78,23 @@ class QuestionPresenterImpl(private val injection: Injection) :
         answerId: Int,
         noSent: Int
     ) {
-        db.questionDao().updateQuestion(
-            Question(
-                question.question.id,
-                question.question.question,
-                question.question.testId,
-                answerId,
-                1
+        compositeDisposable.add(
+            db.questionDao().updateQuestion(
+                Question(
+                    question.question.id,
+                    question.question.question,
+                    question.question.testId,
+                    answerId,
+                    noSent
+                )
             )
+                .subscribeOn(Schedulers.io())
+                .toObservable()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe()
         )
-            .subscribeOn(Schedulers.io())
-            .toObservable()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe()
 
     }
-
 
     private fun setAnswerWhenInternetAppear(context: Context) {
         val constraints = Constraints.Builder()
@@ -106,5 +113,4 @@ class QuestionPresenterImpl(private val injection: Injection) :
         WorkManager.getInstance(context)
             .enqueueUniqueWork("setAnswers", ExistingWorkPolicy.KEEP, setQuestionWorkRequest)
     }
-
 }

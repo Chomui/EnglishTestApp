@@ -24,40 +24,43 @@ class GrammarPresenterImpl(private val injection: Injection) :
 
     override fun getTest(id: Int) {
         var questions: List<QuestionResponse> = emptyList()
-        viewRef?.get()?.startLoadingDialog()
-        db.questionDao().getQuestionsWithAnswersByTestId(id)
-            .subscribeOn(Schedulers.io())
-            .doOnNext {
-                if(it.isNotEmpty()) {
-                    QuestionProvider.questions = it
+        viewRef?.startLoadingDialog()
+        compositeDisposable.add(
+            db.questionDao().getQuestionsWithAnswersByTestId(id)
+                .subscribeOn(Schedulers.io())
+                .doOnSuccess {
+                    if(it.isNotEmpty()) {
+                        QuestionProvider.questions = it
+                    }
                 }
-            }
-            .filter { it.isEmpty() }
-            .flatMap { restApi.getQuestionsByTestId(id) }
-            .map {
-                questions = it
-                QuestionProvider.questions = it.toQuestionWithAnswers()
-                it.questionToEntityModels()
-            }
-            .flatMap {
-                db.questionDao().addAllQuestions(it).toObservable()
-            }
-            .flatMapIterable { questions }
-            .flatMap {
-                db.answerDao().addAllAnswer(it.answersToUiModel()).toObservable()
-            }
-            .toList()
-            .map {
-                val list: MutableList<QuestionWithAnswers> = ArrayList()
-                for (i in 0..100) {
-                    list.addAll(QuestionProvider.questions)
+                .filter { it.isEmpty() }
+                .toObservable()
+                .flatMap { restApi.getQuestionsByTestId(id) }
+                .map {
+                    questions = it
+                    QuestionProvider.questions = it.toQuestionWithAnswers()
+                    it.questionToEntityModels()
                 }
-                QuestionProvider.questions = list
-            }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(Consumer {
-                viewRef?.get()?.stopLoadingDialog()
-                viewRef?.get()?.openQuestionFragment()
-            }, getDefaultErrorConsumer())
+                .flatMap {
+                    db.questionDao().addAllQuestions(it).toObservable()
+                }
+                .flatMapIterable { questions }
+                .flatMap {
+                    db.answerDao().addAllAnswer(it.answersToUiModel()).toObservable()
+                }
+                .toList()
+                .map {
+                    val list: MutableList<QuestionWithAnswers> = ArrayList()
+                    for (i in 0..100) {
+                        list.addAll(QuestionProvider.questions)
+                    }
+                    QuestionProvider.questions = list
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(Consumer {
+                    viewRef?.stopLoadingDialog()
+                    viewRef?.openQuestionFragment()
+                }, getDefaultErrorConsumer())
+        )
     }
 }

@@ -15,19 +15,16 @@ import io.reactivex.Single
 interface TestDao {
 
     @Query("SELECT * FROM " + EnglishContract.EnglishTest.TABLE_NAME)
-    fun getAllTests(): Observable<List<Test>>
+    fun getAllTests(): Single<List<Test>>
 
     @Query(
         "SELECT * FROM " + EnglishContract.EnglishTest.TABLE_NAME +
                 " WHERE " + BaseColumns._ID + " = :id"
     )
-    fun getTestById(id: Int): Observable<Test>
+    fun getTestById(id: Int): Single<Test>
 
     @Insert
     fun addTest(test: Test): Single<Long>
-
-    @Insert
-    fun addAllTests(vararg tests: Test): Completable
 
     @Insert
     fun addAllTests(tests: List<Test>): Single<List<Long>>

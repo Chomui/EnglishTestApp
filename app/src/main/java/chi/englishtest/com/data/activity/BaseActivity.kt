@@ -5,17 +5,22 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import chi.englishtest.com.utils.LoadingDialog
+import io.reactivex.disposables.CompositeDisposable
 
 abstract class BaseActivity<T : BasePresenter<V>, V : BaseView> : AppCompatActivity(),
     BaseView {
 
-    val presenter: T by lazy { injectRepository() }
+    val presenter: T by lazy { lastCustomNonConfigurationInstance as? T ?: injectRepository() }
 
     abstract fun provideLayout(): Int
     abstract fun injectRepository(): T
     abstract fun buttonOnClickListener()
 
     private var loadingDialog: LoadingDialog? = null
+
+    override fun onRetainCustomNonConfigurationInstance(): Any? {
+        return presenter
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,10 +35,6 @@ abstract class BaseActivity<T : BasePresenter<V>, V : BaseView> : AppCompatActiv
         presenter.onDestroy()
         presenter.unbindView()
         super.onDestroy()
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

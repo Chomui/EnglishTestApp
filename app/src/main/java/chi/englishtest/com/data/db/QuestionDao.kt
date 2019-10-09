@@ -13,19 +13,19 @@ interface QuestionDao {
         "SELECT * FROM " + EnglishContract.EnglishQuestion.TABLE_NAME +
                 " WHERE " + EnglishContract.EnglishQuestion.TEST_ID + " = :testId"
     )
-    fun getQuestionsByTestId(testId: Int): Observable<List<Question>>
+    fun getQuestionsByTestId(testId: Int): Single<List<Question>>
 
     @Query(
         "SELECT * FROM " + EnglishContract.EnglishQuestion.TABLE_NAME +
                 " WHERE " + EnglishContract.EnglishQuestion.TEST_ID + " = :testId"
     )
-    fun getQuestionsWithAnswersByTestId(testId: Int): Observable<List<QuestionWithAnswers>>
+    fun getQuestionsWithAnswersByTestId(testId: Int): Single<List<QuestionWithAnswers>>
 
     @Query(
         "SELECT * FROM " + EnglishContract.EnglishQuestion.TABLE_NAME +
                 " WHERE " + EnglishContract.EnglishQuestion.NOT_SENT + " = 1"
     )
-    fun getQuestionsUnsent(): Observable<List<Question>>
+    fun getQuestionsUnsent(): Single<List<Question>>
 
     @Query(
         "UPDATE " + EnglishContract.EnglishQuestion.TABLE_NAME +
@@ -38,16 +38,13 @@ interface QuestionDao {
     fun addQuestion(question: Question): Single<Long>
 
     @Insert
-    fun addAllQuestions(vararg questions: Question): Single<List<Long>>
-
-    @Insert
     fun addAllQuestions(questions: List<Question>): Single<List<Long>>
 
     @Delete
-    fun removeQuestion(question: Question): Completable
+    fun removeQuestion(question: Question): Single<Int>
 
     @Delete
-    fun removeAllQuestions(questions: List<Question>)
+    fun removeAllQuestions(questions: List<Question>): Single<Int>
 
     @Update
     fun updateQuestion(question: Question): Single<Int>

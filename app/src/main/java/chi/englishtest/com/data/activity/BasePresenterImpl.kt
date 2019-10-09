@@ -7,6 +7,7 @@ import chi.englishtest.com.model.Error
 import chi.englishtest.com.network.Injection
 import chi.englishtest.com.network.NetManager
 import chi.englishtest.com.network.RestApi
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.Consumer
 import retrofit2.HttpException
 import java.lang.ref.WeakReference
@@ -17,10 +18,12 @@ abstract class BasePresenterImpl<T : BaseView>(injection: Injection) :
     BasePresenter<T> {
     var restApi = injection.injectRestApi()
     var db = injection.injectDatabase()
-    var viewRef: WeakReference<T>? = null
+    var viewRef: T? = null
+    val compositeDisposable: CompositeDisposable by lazy { CompositeDisposable() }
+
 
     override fun bindView(view: T) {
-        viewRef = WeakReference(view)
+        viewRef = view
     }
 
     override fun unbindView() {
@@ -28,7 +31,7 @@ abstract class BasePresenterImpl<T : BaseView>(injection: Injection) :
     }
 
     override fun onDestroy() {
-        viewRef = null
+        compositeDisposable.clear()
     }
 
     protected fun getDefaultErrorConsumer(): Consumer<Throwable> {
@@ -39,7 +42,7 @@ abstract class BasePresenterImpl<T : BaseView>(injection: Injection) :
 
     protected fun handleDefaultNetError(throwable: Throwable) {
         Log.e("Throwable", throwable.message)
-        viewRef?.get()?.stopLoadingDialog()
+        viewRef?.stopLoadingDialog()
         when (throwable) {
             is HttpException -> {
                 throwable.code()
@@ -48,26 +51,26 @@ abstract class BasePresenterImpl<T : BaseView>(injection: Injection) :
                     jsonError?.let {
                         val error = NetManager.getGson().fromJson(it, Error::class.java)
                         if (error.message.isNotEmpty()) {
-                            viewRef?.get()?.showAlertDialog(error.message)
+                            viewRef?.showAlertDialog(error.message)
                         } else {
-                            viewRef?.get()?.showAlertDialog(it)
+                            viewRef?.showAlertDialog(it)
                         }
                     }
                 } catch (e: Exception) {
-                    viewRef?.get()?.showAlertDialog("Unknown network error")
+                    viewRef?.showAlertDialog("Unknown network error")
                     e.printStackTrace()
                 }
             }
             is SocketTimeoutException -> {
-                viewRef?.get()?.showAlertDialog("Socket error")
+                viewRef?.showAlertDialog("Socket error")
                 throwable.printStackTrace()
             }
             is UnknownHostException -> {
-                viewRef?.get()?.showAlertDialog("No internet")
+                viewRef?.showAlertDialog("No internet")
                 throwable.printStackTrace()
             }
             else -> {
-                viewRef?.get()?.showAlertDialog("Unknown Error")
+                viewRef?.showAlertDialog("Unknown Error")
                 throwable.printStackTrace()
             }
         }

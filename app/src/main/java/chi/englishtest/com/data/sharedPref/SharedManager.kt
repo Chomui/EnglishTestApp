@@ -9,6 +9,8 @@ object SharedManager {
     const val COUNT_DOWN_TIMER_INFO = "COUNT_DOWN_TIMER_INFO"
     const val DEFAULT: String = "DEFAULT"
     const val TEST_ID: Int = 98
+    const val VALUE: String = "VALUE"
+    const val COMPLETED: String = "COMPLETED"
 
     private const val PREFERENCES_NAME: String = "EnglishTestApp"
     private const val ACCESS_TOKEN: String = "ACCESS_TOKEN"
