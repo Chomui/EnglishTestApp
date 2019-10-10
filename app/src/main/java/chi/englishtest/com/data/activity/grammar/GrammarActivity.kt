@@ -86,7 +86,7 @@ class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarVi
     }
 
     override fun openQuestionFragment() {
-        Log.i("Retrofit", "Change fragment, context ${javaClass}")
+        Log.i("Retrofit", "Change fragment, context $javaClass")
         supportFragmentManager.beginTransaction()
             .setCustomAnimations(R.animator.slide_in_left, R.animator.slide_in_right)
             .replace(R.id.fragmentPlace, QuestionFragment())
@@ -123,11 +123,6 @@ class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarVi
     }
 
     private fun pushNotification(message: String) {
-        val pendingIntent =
-            Intent(this, GrammarActivity::class.java).let { notificationIntent ->
-                PendingIntent.getActivity(this, 0, notificationIntent, 0)
-            }
-
         val notificationManager =
             this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -145,7 +140,6 @@ class GrammarActivity : BaseActivity<GrammarPresenter, GrammarView>(), GrammarVi
             setSmallIcon(R.mipmap.ic_launcher)
             setContentTitle("Grammar Test")
             setContentText(message)
-            setContentIntent(pendingIntent)
         }
 
         notificationManager.notify(1, builder.build())
