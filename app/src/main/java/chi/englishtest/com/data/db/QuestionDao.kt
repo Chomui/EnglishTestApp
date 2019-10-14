@@ -2,8 +2,6 @@ package chi.englishtest.com.data.db
 
 import androidx.room.*
 import chi.englishtest.com.data.db.entity.Question
-import io.reactivex.Completable
-import io.reactivex.Observable
 import io.reactivex.Single
 
 @Dao
@@ -23,7 +21,7 @@ interface QuestionDao {
 
     @Query(
         "SELECT * FROM " + EnglishContract.EnglishQuestion.TABLE_NAME +
-                " WHERE " + EnglishContract.EnglishQuestion.NOT_SENT + " = 1"
+                " WHERE " + EnglishContract.EnglishQuestion.ON_SERVER + " = 1"
     )
     fun getQuestionsUnsent(): Single<List<Question>>
 

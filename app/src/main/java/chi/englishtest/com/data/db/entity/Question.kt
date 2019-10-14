@@ -8,8 +8,8 @@ class Question(
     @PrimaryKey @ColumnInfo(name = "_id") var id: Int,
     var question: String,
     @ColumnInfo(name = EnglishContract.EnglishQuestion.TEST_ID) var testId: Int,
-    @ColumnInfo(name = EnglishContract.EnglishQuestion.USER_CHOICE) var userChoice: Int?,
-    @ColumnInfo(name = EnglishContract.EnglishQuestion.NOT_SENT) var notSent: Int
+    @ColumnInfo(name = EnglishContract.EnglishQuestion.USER_CHOICE) var userChoice: Int = -1,
+    @ColumnInfo(name = EnglishContract.EnglishQuestion.ON_SERVER) var onServer: Int = 0
 ) {
 
     override fun equals(other: Any?): Boolean {

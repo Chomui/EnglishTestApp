@@ -9,13 +9,9 @@ import chi.englishtest.com.data.fragment.BasePresenterImpl
 import chi.englishtest.com.network.Injection
 import chi.englishtest.com.utils.QuestionSetAnswerWorker
 import chi.englishtest.com.utils.ServiceManager
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
-import okhttp3.MediaType
-import okhttp3.RequestBody
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 class QuestionPresenterImpl(private val injection: Injection) :
@@ -32,27 +28,28 @@ class QuestionPresenterImpl(private val injection: Injection) :
                             question.question.id,
                             question.question.question,
                             question.question.testId,
-                            answerId,
-                            0
+                            question.question.userChoice
                         )
                     )
                     .subscribeOn(Schedulers.io())
                     .toObservable()
                     .flatMap { restApi.setAnswer(question.question.id, answerId).toObservable() }
-                    .filter { !it.isSuccessful }
                     .doOnNext {
-                        Log.e(
-                            "Retrofit",
-                            "Network Available, Answer is not sent, code: ${it.code()}"
-                        )
+                        if (!it.isSuccessful) {
+                            Log.e(
+                                "Retrofit",
+                                "Network Available, Answer is not sent, code: ${it.code()}"
+                            )
+                        }
                     }
+                    .filter { it.isSuccessful }
                     .flatMap {
                         db.questionDao().updateQuestion(
                             Question(
                                 question.question.id,
                                 question.question.question,
                                 question.question.testId,
-                                answerId,
+                                question.question.userChoice,
                                 1
                             )
                         )
@@ -66,17 +63,17 @@ class QuestionPresenterImpl(private val injection: Injection) :
             )
         } else {
             Log.e("Retrofit", "Network isn't available, set Worker")
-            setQuestionWithNoSentStatus(question, answerId, 1)
+            setQuestionWithSentStatus(question, answerId)
             setAnswerWhenInternetAppear(context)
         }
         viewRef?.setNextQuestion()
     }
 
 
-    private fun setQuestionWithNoSentStatus(
+    private fun setQuestionWithSentStatus(
         question: QuestionWithAnswers,
         answerId: Int,
-        noSent: Int
+        onServer: Int = 0
     ) {
         compositeDisposable.add(
             db.questionDao().updateQuestion(
@@ -85,7 +82,7 @@ class QuestionPresenterImpl(private val injection: Injection) :
                     question.question.question,
                     question.question.testId,
                     answerId,
-                    noSent
+                    onServer
                 )
             )
                 .subscribeOn(Schedulers.io())

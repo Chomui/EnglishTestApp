@@ -21,7 +21,6 @@ abstract class BasePresenterImpl<T : BaseView>(injection: Injection) :
     var viewRef: T? = null
     val compositeDisposable: CompositeDisposable by lazy { CompositeDisposable() }
 
-
     override fun bindView(view: T) {
         viewRef = view
     }

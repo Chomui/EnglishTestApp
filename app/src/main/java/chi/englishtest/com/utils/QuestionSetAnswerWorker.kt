@@ -4,22 +4,9 @@ import android.content.Context
 import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import chi.englishtest.com.data.db.AppDatabase
 import chi.englishtest.com.data.db.entity.Question
-import chi.englishtest.com.model.Error
 import chi.englishtest.com.network.Injection
-import chi.englishtest.com.network.NetManager
-import chi.englishtest.com.network.RestApi
 import io.reactivex.Observable
-import io.reactivex.functions.Consumer
-import okhttp3.MediaType
-import okhttp3.RequestBody
-import org.reactivestreams.Subscriber
-import org.reactivestreams.Subscription
-import retrofit2.HttpException
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
-import java.util.*
 import kotlin.collections.ArrayList
 
 class QuestionSetAnswerWorker(appContext: Context, workerParams: WorkerParameters) :
@@ -55,7 +42,7 @@ class QuestionSetAnswerWorker(appContext: Context, workerParams: WorkerParameter
             .filter { it.isSuccessful }
             .flatMap {
                 Log.i("Retrofit", "Worker: Answer sent successfully to the server")
-                updateDbForSussessfullySendQuestion(questionTemp)
+                updateDbForSuccessfullySendQuestion(questionTemp)
             }
             .toList()
             .blockingGet()
@@ -69,14 +56,14 @@ class QuestionSetAnswerWorker(appContext: Context, workerParams: WorkerParameter
         return Result.success()
     }
 
-    private fun updateDbForSussessfullySendQuestion(questionTemp: Question): Observable<Int>? {
+    private fun updateDbForSuccessfullySendQuestion(questionTemp: Question): Observable<Int>? {
         return db.questionDao().updateQuestion(
             Question(
                 questionTemp.id,
                 questionTemp.question,
                 questionTemp.testId,
                 questionTemp.userChoice,
-                2
+                1
             )
         )
             .toObservable()
