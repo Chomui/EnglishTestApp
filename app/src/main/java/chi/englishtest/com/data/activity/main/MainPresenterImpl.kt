@@ -42,7 +42,7 @@ class MainPresenterImpl(private var injection: Injection) : BasePresenterImpl<Ma
         } else {
             compositeDisposable.add(
                 db.questionDao()
-                    .updateUserChoiceByTestId(testID, null)
+                    .updateUserChoiceByTestId(testID, -1)
                     .subscribeOn(Schedulers.io())
                     .toObservable()
                     .observeOn(AndroidSchedulers.mainThread())
